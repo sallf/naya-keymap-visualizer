@@ -165,6 +165,21 @@ h1 {
   stroke-width: 1;
 }
 
+/* Modifier badge (top-left corner) */
+.modifier-badge {
+  fill: #5a5a7a;
+  stroke: none;
+}
+
+.modifier-badge-text {
+  fill: #2a2a4a;
+  font-size: 7px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
 /* Section labels */
 .section-label {
   fill: #666;

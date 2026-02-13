@@ -1,22 +1,29 @@
 import { KEY_LABELS } from './constants'
 
-// Map shortcut combos to icon names (lucide-react icon names)
+// Map key (without modifier) to icon names (lucide-react icon names)
+// Works for both LGUI (Mac) and LCTRL (Windows)
+const SHORTCUT_KEY_ICONS = {
+  'C': 'copy',
+  'V': 'clipboard-paste',
+  'X': 'scissors',
+  'Z': 'undo-2',
+  'S': 'save',
+  'F': 'search',
+  'N': 'file-plus',
+  'O': 'folder-open',
+  'P': 'printer',
+  'W': 'x',
+  'Q': 'power',
+  'T': 'plus',
+  'R': 'refresh-cw',
+}
+
+// Special multi-modifier shortcuts
 const SHORTCUT_ICONS = {
-  'LGUI + C': 'copy',
-  'LGUI + V': 'clipboard-paste',
-  'LGUI + X': 'scissors',
-  'LGUI + Z': 'undo-2',
   'LGUI + LSHIFT + Z': 'redo-2',
-  'LGUI + S': 'save',
-  'LGUI + A': 'select-all',  // text-select doesn't exist, we'll use a label
-  'LGUI + F': 'search',
-  'LGUI + N': 'file-plus',
-  'LGUI + O': 'folder-open',
-  'LGUI + P': 'printer',
-  'LGUI + W': 'x',
-  'LGUI + Q': 'power',
-  'LGUI + T': 'plus',
-  'LGUI + R': 'refresh-cw',
+  'LCTRL + LSHIFT + Z': 'redo-2',
+  'LGUI + SHIFT + Z': 'redo-2',
+  'LCTRL + SHIFT + Z': 'redo-2',
 }
 
 // Map action types to their display names
@@ -74,27 +81,52 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
     return `L${layerNum} ${typeLabel}`
   }
 
-  if (actionType === 'shortcut_alias') {
-    // Check if this shortcut has an icon
+  // Handle shortcuts (both shortcut_alias and combo types)
+  if (actionType === 'shortcut_alias' || actionType === 'combo') {
+    // Check for exact match first (multi-modifier shortcuts with icons)
     if (SHORTCUT_ICONS[actionCode]) {
       return { icon: SHORTCUT_ICONS[actionCode] }
     }
-    return actionCode.replace(/LGUI \+ |LSHIFT \+ |LCTRL \+ |LALT \+ /g, '').substring(0, 6)
-  }
 
-  if (actionType === 'combo') {
-    const match = actionCode.match(/LSHIFT \+ (\w+)/)
-    if (match) {
-      const base = match[1]
+    // Extract the key from shortcuts like "LGUI + C" or "LCTRL + V"
+    const iconMatch = actionCode.match(/^(?:LGUI|LCTRL|RGUI|RCTRL) \+ ([A-Z])$/)
+    if (iconMatch && SHORTCUT_KEY_ICONS[iconMatch[1]]) {
+      return { icon: SHORTCUT_KEY_ICONS[iconMatch[1]] }
+    }
+
+    // Parse modifiers
+    const modifiers = []
+    if (actionCode.includes('LGUI') || actionCode.includes('RGUI')) modifiers.push('⌘')
+    if (actionCode.includes('LCTRL') || actionCode.includes('RCTRL')) modifiers.push('⌃')
+    if (actionCode.includes('LALT') || actionCode.includes('RALT')) modifiers.push('⌥')
+    if (actionCode.includes('LSHIFT') || actionCode.includes('RSHIFT')) modifiers.push('⇧')
+
+    // Get the key part (last segment after " + ")
+    const parts = actionCode.split(' + ')
+    const keyPart = parts[parts.length - 1]
+
+    // For shift-only combos, check if it's a symbol shortcut
+    if (modifiers.length === 1 && modifiers[0] === '⇧') {
       const shiftMap = {
         'COMMA': '<', 'PERIOD': '>', 'SLASH': '?',
-        'SEMICOLON': ':', 'GRAVE': '~',
-        '1': '!', '2': '@', '3': '#', '4': '$', '5': '%',
-        '6': '^', '7': '&', '8': '*', '9': '(', '0': ')'
+        'SEMICOLON': ':', 'GRAVE': '~', 'SINGLE_QUOTE': '"',
+        'LEFT_BRACKET': '{', 'RIGHT_BRACKET': '}',
+        'NUMBER_1': '!', 'NUMBER_2': '@', 'NUMBER_3': '#',
+        'NUMBER_4': '$', 'NUMBER_5': '%', 'NUMBER_6': '^',
+        'NUMBER_7': '&', 'NUMBER_8': '*', 'NUMBER_9': '(', 'NUMBER_0': ')'
       }
-      return shiftMap[base] || actionCode.substring(0, 6)
+      if (shiftMap[keyPart]) {
+        return shiftMap[keyPart]
+      }
     }
-    return actionCode.substring(0, 6)
+
+    const keyLabel = KEY_LABELS[keyPart] || keyPart
+
+    if (modifiers.length > 0) {
+      return { modifiers: modifiers.join(''), label: keyLabel }
+    }
+
+    return keyLabel.substring(0, 6)
   }
 
   if (KEY_LABELS[actionCode]) {

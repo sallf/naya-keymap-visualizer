@@ -15,8 +15,10 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
   const hasHold = data?.hold != null
 
   const isIcon = typeof label === 'object' && label?.icon
-  const labelText = isIcon ? '' : label
-  const labelClass = labelText.length > 4 ? 'small' : ''
+  const hasModifiers = typeof label === 'object' && label?.modifiers
+  const labelText = isIcon ? '' : (hasModifiers ? label.label : label)
+  const modifiers = hasModifiers ? label.modifiers : null
+  const labelClass = typeof labelText === 'string' && labelText.length > 4 ? 'small' : ''
   const labelY = hasHold ? py + height * 0.4 : py + height / 2
 
   return (
@@ -33,6 +35,28 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
         height={height}
         rx={RADIUS}
       />
+      {/* Modifier badge in top-left corner */}
+      {modifiers && (
+        <>
+          <path
+            className="modifier-badge"
+            d={`M ${px} ${py + RADIUS}
+                A ${RADIUS} ${RADIUS} 0 0 1 ${px + RADIUS} ${py}
+                L ${px + modifiers.length * 8 + 4} ${py}
+                L ${px + modifiers.length * 8 + 4} ${py + 11 - 2}
+                A 2 2 0 0 1 ${px + modifiers.length * 8 + 4 - 2} ${py + 11}
+                L ${px} ${py + 11}
+                Z`}
+          />
+          <text
+            className="modifier-badge-text"
+            x={px + (modifiers.length * 8 + 4) / 2}
+            y={py + 7}
+          >
+            {modifiers}
+          </text>
+        </>
+      )}
       {isIcon ? (
         <KeyIcon
           name={label.icon}

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useDatabase, useProfiles, useLayers, useKeyData } from './hooks/useDatabase'
 import { Keyboard } from './components/Keyboard'
+import { FileDropZone } from './components/FileDropZone'
 
 function App() {
-  const { db, loading, error } = useDatabase()
+  const [isBeta, setIsBeta] = useState(false)
+  const { db, loading, error, needsFile, loadFromFile } = useDatabase(isBeta)
   const profiles = useProfiles(db)
   const [selectedProfile, setSelectedProfile] = useState(null)
   const [selectedLayer, setSelectedLayer] = useState(null)
@@ -35,22 +37,27 @@ function App() {
       <div className="container">
         <div className="loading">
           <p>Loading database...</p>
-          <p className="hint">Make sure the database file is in the public folder</p>
         </div>
       </div>
     )
   }
 
-  if (error) {
+  if (needsFile || error) {
     return (
       <div className="container">
-        <div className="error">
-          <strong>Error:</strong> {error}
-          <br /><br />
-          <strong>Setup:</strong><br />
-          1. <code>cp "~/Library/Application Support/NayaFlow-Beta/user-data-beta.db" public/</code><br />
-          2. <code>npm run dev</code>
-        </div>
+        <header>
+          <h1>Naya Keymap Viewer</h1>
+        </header>
+        {error && (
+          <div className="error" style={{ marginBottom: '20px' }}>
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+        <FileDropZone
+          onFileSelect={loadFromFile}
+          isBeta={isBeta}
+          onBetaToggle={setIsBeta}
+        />
       </div>
     )
   }

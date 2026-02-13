@@ -1,37 +1,81 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
-export function useDatabase() {
+export function useDatabase(isBeta = false) {
   const [db, setDb] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [needsFile, setNeedsFile] = useState(false)
+
+  const dbFileName = isBeta ? 'user-data-beta.db' : 'user-data.db'
+
+  const loadDatabase = useCallback(async (arrayBuffer) => {
+    try {
+      const SQL = await window.initSqlJs({
+        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+      })
+      const database = new SQL.Database(new Uint8Array(arrayBuffer))
+      setDb(database)
+      setLoading(false)
+      setNeedsFile(false)
+      setError(null)
+    } catch (e) {
+      setError('Failed to load database: ' + e.message)
+      setLoading(false)
+    }
+  }, [])
+
+  const loadFromFile = useCallback(async (file) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+
+      // Validate SQLite header
+      const header = new Uint8Array(arrayBuffer.slice(0, 16))
+      const headerStr = String.fromCharCode(...header)
+      if (!headerStr.startsWith('SQLite format 3')) {
+        throw new Error('Not a valid SQLite database file')
+      }
+
+      await loadDatabase(arrayBuffer)
+    } catch (e) {
+      setError('Failed to read file: ' + e.message)
+      setLoading(false)
+    }
+  }, [loadDatabase])
 
   useEffect(() => {
     async function init() {
       try {
-        // sql.js is loaded via script tag in index.html
-        const SQL = await window.initSqlJs({
-          locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-        })
+        // Try to load from public folder first
+        const response = await fetch(`/${dbFileName}`)
 
-        const response = await fetch('/user-data-beta.db')
-        if (!response.ok) {
-          throw new Error('Could not load database file')
+        // Check if we got a valid response with the right content type
+        const contentType = response.headers.get('content-type')
+        if (response.ok && contentType && !contentType.includes('text/html')) {
+          const buffer = await response.arrayBuffer()
+          // Quick validation: SQLite files start with "SQLite format 3"
+          const header = new Uint8Array(buffer.slice(0, 16))
+          const headerStr = String.fromCharCode(...header)
+          if (headerStr.startsWith('SQLite format 3')) {
+            await loadDatabase(buffer)
+            return
+          }
         }
 
-        const buffer = await response.arrayBuffer()
-        const database = new SQL.Database(new Uint8Array(buffer))
-        setDb(database)
+        // No valid file in public folder, prompt user to select one
         setLoading(false)
+        setNeedsFile(true)
       } catch (e) {
-        setError(e.message)
         setLoading(false)
+        setNeedsFile(true)
       }
     }
 
     init()
-  }, [])
+  }, [loadDatabase, dbFileName])
 
-  return { db, loading, error }
+  return { db, loading, error, needsFile, loadFromFile }
 }
 
 export function useProfiles(db) {

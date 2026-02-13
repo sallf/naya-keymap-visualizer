@@ -1,5 +1,7 @@
+import type { Layout } from './types'
+
 // Key display name mappings
-export const KEY_LABELS = {
+export const KEY_LABELS: Record<string, string> = {
   'ESC': 'Esc',
   'GRAVE': '`~',
   'NUMBER_1': '1', 'NUMBER_2': '2', 'NUMBER_3': '3', 'NUMBER_4': '4', 'NUMBER_5': '5',
@@ -46,7 +48,6 @@ export const KEY_LABELS = {
   'VOL_UP': '🔊', 'VOL_DOWN': '🔉', 'MUTE': '🔇',
   'PLAY_PAUSE': '⏯', 'NEXT_TRACK': '⏭', 'PREV_TRACK': '⏮',
   'M1': 'L Click', 'M2': 'R Click',
-
 }
 
 // SVG Layout Configuration
@@ -55,7 +56,7 @@ export const GAP = 4 // Gap between keys
 export const RADIUS = 6 // Corner radius
 
 // Layout definition - simplified with straight rows
-export const LAYOUT = {
+export const LAYOUT: Layout = {
   left: [
     // Row 0 - Number row
     { x: 0, y: 0, w: 1, h: 1, pos: 0 },    // Esc

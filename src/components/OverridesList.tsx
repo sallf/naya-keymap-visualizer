@@ -1,7 +1,9 @@
 import * as icons from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import type { Override } from '../types'
 
 // Icon name to component mapping (subset for display)
-const iconComponents = {
+const iconComponents: Record<string, LucideIcon> = {
   'copy': icons.Copy,
   'clipboard-paste': icons.ClipboardPaste,
   'scissors': icons.Scissors,
@@ -56,7 +58,13 @@ const iconComponents = {
   'chevron-right': icons.ChevronRight,
 }
 
-export function OverridesList({ overrides, onClear, onClearAll }) {
+interface OverridesListProps {
+  overrides: Record<string, Override>
+  onClear: (keyPos: number) => void
+  onClearAll: () => void
+}
+
+export function OverridesList({ overrides, onClear, onClearAll }: OverridesListProps) {
   const entries = Object.entries(overrides)
 
   if (entries.length === 0) {
@@ -96,7 +104,7 @@ export function OverridesList({ overrides, onClear, onClearAll }) {
               </span>
               <button
                 className="override-remove"
-                onClick={() => onClear(keyPos)}
+                onClick={() => onClear(Number(keyPos))}
                 title="Remove override"
               >
                 <icons.X size={14} />

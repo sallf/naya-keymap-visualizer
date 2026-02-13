@@ -1,8 +1,9 @@
 import { KEY_LABELS } from './constants'
+import type { KeyLabel, LayerInfo } from './types'
 
 // Map key (without modifier) to icon names (lucide-react icon names)
 // Works for both LGUI (Mac) and LCTRL (Windows)
-const SHORTCUT_KEY_ICONS = {
+const SHORTCUT_KEY_ICONS: Record<string, string> = {
   'C': 'copy',
   'V': 'clipboard-paste',
   'X': 'scissors',
@@ -19,7 +20,7 @@ const SHORTCUT_KEY_ICONS = {
 }
 
 // Special multi-modifier shortcuts
-const SHORTCUT_ICONS = {
+const SHORTCUT_ICONS: Record<string, string> = {
   'LGUI + LSHIFT + Z': 'redo-2',
   'LCTRL + LSHIFT + Z': 'redo-2',
   'LGUI + SHIFT + Z': 'redo-2',
@@ -35,7 +36,7 @@ const SHORTCUT_ICONS = {
 }
 
 // System/media key icons
-const SYSTEM_KEY_ICONS = {
+const SYSTEM_KEY_ICONS: Record<string, string> = {
   // Media
   'C_VOL_UP': 'volume-2',
   'C_VOL_DOWN': 'volume-1',
@@ -83,7 +84,7 @@ const SYSTEM_KEY_ICONS = {
 }
 
 // Labels for system keys (shown as text overlay or standalone)
-const SYSTEM_KEY_LABELS = {
+const SYSTEM_KEY_LABELS: Record<string, string> = {
   'LED_COLOR_RED': '🔴',
   'LED_COLOR_GREEN': '🟢',
   'LED_COLOR_BLUE': '🔵',
@@ -96,14 +97,14 @@ const SYSTEM_KEY_LABELS = {
 }
 
 // Map action types to their display names
-const LAYER_TYPE_LABELS = {
+const LAYER_TYPE_LABELS: Record<string, string> = {
   'layer_polite_hold': 'Hold',
   'layer_polite_toggle': 'Toggle',
   'layer_rude_toggle': 'To',
   'layer_polite_oneshot': 'Sticky',
 }
 
-export function getTypeClass(actionType) {
+export function getTypeClass(actionType: string): string {
   switch (actionType) {
     case 'modifier': return 'modifier'
     case 'layer_polite_hold':
@@ -123,7 +124,11 @@ export function getTypeClass(actionType) {
   }
 }
 
-export function getKeyLabel(actionCode, actionType, layerMap) {
+export function getKeyLabel(
+  actionCode: string,
+  actionType: string,
+  layerMap?: Map<string, LayerInfo>
+): KeyLabel {
   if (!actionCode) return ''
 
   // Handle disabled keys
@@ -193,7 +198,7 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
       return { modifiers: '◆', label: keyLabel }
     }
 
-    const modifiers = []
+    const modifiers: string[] = []
     if (hasGui) modifiers.push('⌘')
     if (hasCtrl) modifiers.push('⌃')
     if (hasAlt) modifiers.push('⌥')
@@ -205,7 +210,7 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
 
     // For shift-only combos, check if it's a symbol shortcut
     if (modifiers.length === 1 && modifiers[0] === '⇧') {
-      const shiftMap = {
+      const shiftMap: Record<string, string> = {
         'COMMA': '<', 'PERIOD': '>', 'SLASH': '?',
         'SEMICOLON': ':', 'GRAVE': '~', 'SINGLE_QUOTE': '"',
         'LEFT_BRACKET': '{', 'RIGHT_BRACKET': '}',

@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, MouseEvent } from 'react'
 import * as icons from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import type { Override, OverrideValue } from '../types'
 
 // Available icons for selection
-const AVAILABLE_ICONS = [
+const AVAILABLE_ICONS: { name: string; label: string }[] = [
   { name: 'copy', label: 'Copy' },
   { name: 'clipboard-paste', label: 'Paste' },
   { name: 'scissors', label: 'Cut' },
@@ -58,7 +60,7 @@ const AVAILABLE_ICONS = [
 ]
 
 // Icon name to component mapping
-const iconComponents = {
+const iconComponents: Record<string, LucideIcon> = {
   'copy': icons.Copy,
   'clipboard-paste': icons.ClipboardPaste,
   'scissors': icons.Scissors,
@@ -113,7 +115,29 @@ const iconComponents = {
   'chevron-right': icons.ChevronRight,
 }
 
-function OverrideSection({ title, currentLabel, mode, setMode, textValue, setTextValue, selectedIcon, setSelectedIcon }) {
+type Mode = 'text' | 'icon'
+
+interface OverrideSectionProps {
+  title: string
+  currentLabel: string
+  mode: Mode
+  setMode: (mode: Mode) => void
+  textValue: string
+  setTextValue: (value: string) => void
+  selectedIcon: string | null
+  setSelectedIcon: (icon: string | null) => void
+}
+
+function OverrideSection({
+  title,
+  currentLabel,
+  mode,
+  setMode,
+  textValue,
+  setTextValue,
+  selectedIcon,
+  setSelectedIcon
+}: OverrideSectionProps) {
   return (
     <div className="override-section">
       <div className="override-section-header">
@@ -168,16 +192,34 @@ function OverrideSection({ title, currentLabel, mode, setMode, textValue, setTex
   )
 }
 
-export function ManualOverrideModal({ keyPos, currentLabel, currentHoldLabel, hasHold, onSave, onClose, onClear }) {
+interface ManualOverrideModalProps {
+  keyPos: number | null
+  currentLabel: string
+  currentHoldLabel: string
+  hasHold: boolean
+  onSave: (keyPos: number, override: Override) => void
+  onClose: () => void
+  onClear: (keyPos: number) => void
+}
+
+export function ManualOverrideModal({
+  keyPos,
+  currentLabel,
+  currentHoldLabel,
+  hasHold,
+  onSave,
+  onClose,
+  onClear
+}: ManualOverrideModalProps) {
   // Press override state
-  const [pressMode, setPressMode] = useState('text')
+  const [pressMode, setPressMode] = useState<Mode>('text')
   const [pressTextValue, setPressTextValue] = useState('')
-  const [pressSelectedIcon, setPressSelectedIcon] = useState(null)
+  const [pressSelectedIcon, setPressSelectedIcon] = useState<string | null>(null)
 
   // Hold override state
-  const [holdMode, setHoldMode] = useState('text')
+  const [holdMode, setHoldMode] = useState<Mode>('text')
   const [holdTextValue, setHoldTextValue] = useState('')
-  const [holdSelectedIcon, setHoldSelectedIcon] = useState(null)
+  const [holdSelectedIcon, setHoldSelectedIcon] = useState<string | null>(null)
 
   useEffect(() => {
     // Reset form when modal opens
@@ -190,8 +232,10 @@ export function ManualOverrideModal({ keyPos, currentLabel, currentHoldLabel, ha
   }, [keyPos])
 
   const handleSave = () => {
-    let pressOverride = null
-    let holdOverride = null
+    if (keyPos === null) return
+
+    let pressOverride: OverrideValue | null = null
+    let holdOverride: OverrideValue | null = null
 
     if (pressMode === 'text' && pressTextValue.trim()) {
       pressOverride = { type: 'text', value: pressTextValue.trim() }
@@ -215,8 +259,15 @@ export function ManualOverrideModal({ keyPos, currentLabel, currentHoldLabel, ha
   }
 
   const handleClear = () => {
+    if (keyPos === null) return
     onClear(keyPos)
     onClose()
+  }
+
+  const handleOverlayClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
   }
 
   if (keyPos === null) return null
@@ -226,7 +277,7 @@ export function ManualOverrideModal({ keyPos, currentLabel, currentHoldLabel, ha
   const canSave = hasPressOverride || hasHoldOverride
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Override Key {keyPos}</h3>

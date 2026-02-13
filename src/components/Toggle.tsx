@@ -1,4 +1,10 @@
-export function Toggle({ checked, onChange, label }) {
+interface ToggleProps {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  label?: string
+}
+
+export function Toggle({ checked, onChange, label }: ToggleProps) {
   return (
     <label className="toggle-container">
       {label && <span className="toggle-text">{label}</span>}

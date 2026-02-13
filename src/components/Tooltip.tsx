@@ -1,5 +1,14 @@
+import type { KeyData } from '../types'
+
+interface TooltipProps {
+  pos: number
+  data: KeyData
+  x: number
+  y: number
+}
+
 // Make action codes more human readable
-function formatActionCode(actionCode) {
+function formatActionCode(actionCode: string | undefined): string {
   if (!actionCode) return '-'
 
   return actionCode
@@ -14,7 +23,7 @@ function formatActionCode(actionCode) {
     .replace(/_/g, ' ')
 }
 
-export function Tooltip({ pos, data, x, y }) {
+export function Tooltip({ pos, data, x, y }: TooltipProps) {
   if (!data) return null
 
   return (

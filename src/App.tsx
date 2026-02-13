@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ChangeEvent } from 'react'
 import { useDatabase, useProfiles, useLayers, useKeyData } from './hooks/useDatabase'
 import { useOverrides } from './hooks/useOverrides'
 import { Keyboard } from './components/Keyboard'
@@ -6,6 +6,7 @@ import { FileDropZone } from './components/FileDropZone'
 import { Toggle } from './components/Toggle'
 import { ManualOverrideModal } from './components/ManualOverrideModal'
 import { OverridesList } from './components/OverridesList'
+import type { KeyLabel } from './types'
 
 function App() {
   const [isBeta, setIsBeta] = useState(() => {
@@ -13,16 +14,16 @@ function App() {
     return stored === 'true'
   })
 
-  const handleBetaToggle = (value) => {
+  const handleBetaToggle = (value: boolean) => {
     setIsBeta(value)
     localStorage.setItem('naya-keymap-beta', value.toString())
   }
   const { db, loading, error, needsFile, loadFromFile } = useDatabase(isBeta)
   const profiles = useProfiles(db)
-  const [selectedProfile, setSelectedProfile] = useState(null)
-  const [selectedLayer, setSelectedLayer] = useState(null)
+  const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
+  const [selectedLayer, setSelectedLayer] = useState<string | null>(null)
   const [showKeyNumbers, setShowKeyNumbers] = useState(false)
-  const [modalKey, setModalKey] = useState(null)
+  const [modalKey, setModalKey] = useState<number | null>(null)
   const [modalLabel, setModalLabel] = useState('')
   const [modalHoldLabel, setModalHoldLabel] = useState('')
   const [modalHasHold, setModalHasHold] = useState(false)
@@ -50,12 +51,12 @@ function App() {
     setSelectedLayer(null)
   }, [selectedProfile])
 
-  const handleKeyClick = (keyPos, label, holdLabel, hasHold) => {
+  const handleKeyClick = (keyPos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => {
     const labelStr = typeof label === 'object' && label !== null
-      ? (label.icon || label.label || '')
+      ? ('icon' in label ? label.icon : 'label' in label ? label.label : '')
       : (label || '')
     const holdLabelStr = typeof holdLabel === 'object' && holdLabel !== null
-      ? (holdLabel.icon || holdLabel.label || '')
+      ? ('icon' in holdLabel ? holdLabel.icon : 'label' in holdLabel ? holdLabel.label : '')
       : (holdLabel || '')
     setModalKey(keyPos)
     setModalLabel(labelStr)
@@ -68,6 +69,14 @@ function App() {
     setModalLabel('')
     setModalHoldLabel('')
     setModalHasHold(false)
+  }
+
+  const handleProfileChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedProfile(e.target.value)
+  }
+
+  const handleLayerChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedLayer(e.target.value)
   }
 
   if (loading) {
@@ -109,7 +118,7 @@ function App() {
           <select
             id="profile-select"
             value={selectedProfile || ''}
-            onChange={(e) => setSelectedProfile(e.target.value)}
+            onChange={handleProfileChange}
           >
             {profiles.map((profile) => (
               <option key={profile.id} value={profile.id}>
@@ -122,7 +131,7 @@ function App() {
           <select
             id="layer-select"
             value={selectedLayer || ''}
-            onChange={(e) => setSelectedLayer(e.target.value)}
+            onChange={handleLayerChange}
           >
             {layers.map((layer) => (
               <option key={layer.id} value={layer.id}>

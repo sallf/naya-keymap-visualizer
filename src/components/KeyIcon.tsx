@@ -1,7 +1,8 @@
 import * as icons from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 // Map icon names to Lucide components
-const iconMap = {
+const iconMap: Record<string, LucideIcon> = {
   // Shortcuts
   'copy': icons.Copy,
   'clipboard-paste': icons.ClipboardPaste,
@@ -63,7 +64,15 @@ const iconMap = {
   'eye-off': icons.EyeOff,
 }
 
-export function KeyIcon({ name, x, y, size = 16, color = '#fff' }) {
+interface KeyIconProps {
+  name: string
+  x: number
+  y: number
+  size?: number
+  color?: string
+}
+
+export function KeyIcon({ name, x, y, size = 16, color = '#fff' }: KeyIconProps) {
   const IconComponent = iconMap[name]
 
   if (!IconComponent) {
@@ -78,7 +87,6 @@ export function KeyIcon({ name, x, y, size = 16, color = '#fff' }) {
       height={size}
     >
       <div
-        xmlns="http://www.w3.org/1999/xhtml"
         style={{
           display: 'flex',
           alignItems: 'center',

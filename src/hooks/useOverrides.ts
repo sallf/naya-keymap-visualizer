@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import type { Override, AllOverrides } from '../types'
 
 const STORAGE_KEY = 'naya-keymap-overrides'
 
-export function useOverrides(layerId) {
+export function useOverrides(layerId: string | null) {
   // Store all overrides keyed by layerId
-  const [allOverrides, setAllOverrides] = useState(() => {
+  const [allOverrides, setAllOverrides] = useState<AllOverrides>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
       return stored ? JSON.parse(stored) : {}
@@ -18,7 +19,7 @@ export function useOverrides(layerId) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(allOverrides))
     } catch (e) {
-      console.warn('Could not save overrides to localStorage:', e.message)
+      console.warn('Could not save overrides to localStorage:', (e as Error).message)
     }
   }, [allOverrides])
 
@@ -27,7 +28,7 @@ export function useOverrides(layerId) {
     return layerId ? (allOverrides[layerId] || {}) : {}
   }, [allOverrides, layerId])
 
-  const setOverride = useCallback((keyPos, override) => {
+  const setOverride = useCallback((keyPos: number, override: Override) => {
     if (!layerId) return
     setAllOverrides(prev => ({
       ...prev,
@@ -38,7 +39,7 @@ export function useOverrides(layerId) {
     }))
   }, [layerId])
 
-  const clearOverride = useCallback((keyPos) => {
+  const clearOverride = useCallback((keyPos: number) => {
     if (!layerId) return
     setAllOverrides(prev => {
       const layerOverrides = { ...(prev[layerId] || {}) }
@@ -59,7 +60,7 @@ export function useOverrides(layerId) {
     })
   }, [layerId])
 
-  const getOverride = useCallback((keyPos) => {
+  const getOverride = useCallback((keyPos: number): Override | null => {
     return overrides[keyPos] || null
   }, [overrides])
 

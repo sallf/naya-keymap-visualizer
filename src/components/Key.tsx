@@ -1,8 +1,19 @@
 import { U, GAP, RADIUS } from '../constants'
 import { getTypeClass, getKeyLabel } from '../utils'
 import { KeyIcon } from './KeyIcon'
+import type { KeyDef, KeyData, Override, KeyLabel } from '../types'
 
-export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, onClick }) {
+interface KeyProps {
+  keyDef: KeyDef
+  data: KeyData | undefined
+  showKeyNumber: boolean
+  override?: Override
+  onHover?: (pos: number, data: KeyData | undefined) => void
+  onLeave?: () => void
+  onClick?: (pos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => void
+}
+
+export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, onClick }: KeyProps) {
   const { x, y, w, h, pos } = keyDef
 
   const px = x * (U + GAP)
@@ -15,7 +26,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
   const hasHold = data?.hold != null
 
   // Apply press override if exists
-  let label = originalLabel
+  let label: KeyLabel = originalLabel
   if (override?.press) {
     if (override.press.type === 'text') {
       label = override.press.value
@@ -25,7 +36,9 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
   }
 
   // Get hold label and apply hold override if exists
-  let holdLabel = hasHold ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap) : null
+  let holdLabel: KeyLabel | null = hasHold && data?.hold
+    ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap)
+    : null
   if (hasHold && override?.hold) {
     if (override.hold.type === 'text') {
       holdLabel = override.hold.value
@@ -33,27 +46,42 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
       holdLabel = { icon: override.hold.value }
     }
   }
-  const holdIsIcon = typeof holdLabel === 'object' && holdLabel?.icon
-  const holdHasModifiers = typeof holdLabel === 'object' && holdLabel?.modifiers
-  const holdLabelText = holdIsIcon ? '' : (holdHasModifiers ? holdLabel.label : holdLabel)
-  const holdModifiers = holdHasModifiers ? holdLabel.modifiers : null
 
-  const isIcon = typeof label === 'object' && label?.icon
-  const hasModifiers = typeof label === 'object' && label?.modifiers
-  const iconWithLabel = isIcon && label?.label  // Icon with a small label (like BT 1)
-  const labelText = isIcon ? (iconWithLabel ? label.label : '') : (hasModifiers ? label.label : label)
-  const modifiers = hasModifiers ? label.modifiers : null
-  const labelClass = typeof labelText === 'string' && labelText.length > 4 ? 'small' : ''
+  const holdIsIcon = typeof holdLabel === 'object' && holdLabel !== null && 'icon' in holdLabel
+  const holdHasModifiers = typeof holdLabel === 'object' && holdLabel !== null && 'modifiers' in holdLabel
+  const holdLabelText: string = holdIsIcon
+    ? ''
+    : (holdHasModifiers
+      ? (holdLabel as { modifiers: string; label: string }).label
+      : (typeof holdLabel === 'string' ? holdLabel : ''))
+  const holdModifiers = holdHasModifiers ? (holdLabel as { modifiers: string; label: string }).modifiers : null
+
+  const isIcon = typeof label === 'object' && label !== null && 'icon' in label
+  const hasModifiers = typeof label === 'object' && label !== null && 'modifiers' in label
+  const iconWithLabel = isIcon && 'label' in (label as { icon: string; label?: string })
+  const labelText: string = isIcon
+    ? (iconWithLabel ? (label as { icon: string; label: string }).label : '')
+    : (hasModifiers ? (label as { modifiers: string; label: string }).label : (typeof label === 'string' ? label : ''))
+  const modifiers = hasModifiers ? (label as { modifiers: string; label: string }).modifiers : null
+  const labelClass = labelText.length > 4 ? 'small' : ''
 
   const holdBannerHeight = height * 0.4
   const labelY = hasHold ? py + (height - holdBannerHeight) / 2 : py + height / 2
+
+  const handleClick = () => {
+    if (!onClick) return
+    const originalHoldLabel = hasHold && data?.hold
+      ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap)
+      : null
+    onClick(pos, originalLabel, originalHoldLabel, hasHold)
+  }
 
   return (
     <g
       className={`key-group ${typeClass}${override ? ' has-override' : ''}`}
       onMouseEnter={() => onHover?.(pos, data)}
       onMouseLeave={() => onLeave?.()}
-      onClick={() => onClick?.(pos, originalLabel, hasHold ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap) : null, hasHold)}
+      onClick={handleClick}
       style={{ cursor: 'pointer' }}
     >
       <rect
@@ -89,7 +117,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
       {isIcon ? (
         <>
           <KeyIcon
-            name={label.icon}
+            name={(label as { icon: string }).icon}
             x={px + width / 2}
             y={iconWithLabel ? labelY - 5 : labelY}
             size={16}
@@ -100,7 +128,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
               x={px + width / 2}
               y={labelY + 10}
             >
-              {label.label}
+              {(label as { icon: string; label: string }).label}
             </text>
           )}
         </>
@@ -128,7 +156,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
           />
           {holdIsIcon ? (
             <KeyIcon
-              name={holdLabel.icon}
+              name={(holdLabel as { icon: string }).icon}
               x={px + width / 2}
               y={py + height - holdBannerHeight / 2}
               size={14}

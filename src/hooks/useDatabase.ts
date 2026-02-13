@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
+import type { Profile, Layer, KeyData, LayerInfo } from '../types'
 
 const STORAGE_KEY = 'naya-keymap-db'
 
 // Convert ArrayBuffer to base64 for storage
-function arrayBufferToBase64(buffer) {
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)
   let binary = ''
   for (let i = 0; i < bytes.byteLength; i++) {
@@ -13,7 +14,7 @@ function arrayBufferToBase64(buffer) {
 }
 
 // Convert base64 back to ArrayBuffer
-function base64ToArrayBuffer(base64) {
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = atob(base64)
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) {
@@ -23,17 +24,17 @@ function base64ToArrayBuffer(base64) {
 }
 
 export function useDatabase(isBeta = false) {
-  const [db, setDb] = useState(null)
+  const [db, setDb] = useState<Database | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const [needsFile, setNeedsFile] = useState(false)
 
   const dbFileName = isBeta ? 'user-data-beta.db' : 'user-data.db'
 
-  const loadDatabase = useCallback(async (arrayBuffer, saveToStorage = true) => {
+  const loadDatabase = useCallback(async (arrayBuffer: ArrayBuffer, saveToStorage = true) => {
     try {
       const SQL = await window.initSqlJs({
-        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+        locateFile: (file: string) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
       })
       const database = new SQL.Database(new Uint8Array(arrayBuffer))
       setDb(database)
@@ -47,16 +48,16 @@ export function useDatabase(isBeta = false) {
           const base64 = arrayBufferToBase64(arrayBuffer)
           localStorage.setItem(STORAGE_KEY, base64)
         } catch (e) {
-          console.warn('Could not save to localStorage:', e.message)
+          console.warn('Could not save to localStorage:', (e as Error).message)
         }
       }
     } catch (e) {
-      setError('Failed to load database: ' + e.message)
+      setError('Failed to load database: ' + (e as Error).message)
       setLoading(false)
     }
   }, [])
 
-  const loadFromFile = useCallback(async (file) => {
+  const loadFromFile = useCallback(async (file: File) => {
     setLoading(true)
     setError(null)
     try {
@@ -71,7 +72,7 @@ export function useDatabase(isBeta = false) {
 
       await loadDatabase(arrayBuffer)
     } catch (e) {
-      setError('Failed to read file: ' + e.message)
+      setError('Failed to read file: ' + (e as Error).message)
       setLoading(false)
     }
   }, [loadDatabase])
@@ -91,7 +92,7 @@ export function useDatabase(isBeta = false) {
           }
         }
       } catch (e) {
-        console.warn('Could not load from localStorage:', e.message)
+        console.warn('Could not load from localStorage:', (e as Error).message)
       }
 
       // Then try to load from public folder
@@ -110,7 +111,7 @@ export function useDatabase(isBeta = false) {
             return
           }
         }
-      } catch (e) {
+      } catch {
         // Ignore fetch errors
       }
 
@@ -125,23 +126,26 @@ export function useDatabase(isBeta = false) {
   return { db, loading, error, needsFile, loadFromFile }
 }
 
-export function useProfiles(db) {
-  const [profiles, setProfiles] = useState([])
+export function useProfiles(db: Database | null): Profile[] {
+  const [profiles, setProfiles] = useState<Profile[]>([])
 
   useEffect(() => {
     if (!db) return
 
     const results = db.exec('SELECT id, name FROM profiles ORDER BY name')
     if (results.length > 0) {
-      setProfiles(results[0].values.map(([id, name]) => ({ id, name })))
+      setProfiles(results[0].values.map(([id, name]) => ({
+        id: id as string,
+        name: name as string
+      })))
     }
   }, [db])
 
   return profiles
 }
 
-export function useLayers(db, profileId) {
-  const [layers, setLayers] = useState([])
+export function useLayers(db: Database | null, profileId: string | null): Layer[] {
+  const [layers, setLayers] = useState<Layer[]>([])
 
   useEffect(() => {
     if (!db || !profileId) return
@@ -153,28 +157,36 @@ export function useLayers(db, profileId) {
       ORDER BY order_id
     `)
     if (results.length > 0) {
-      setLayers(results[0].values.map(([id, name, order]) => ({ id, name, order })))
+      setLayers(results[0].values.map(([id, name, order]) => ({
+        id: id as string,
+        name: name as string,
+        order: order as number
+      })))
     }
   }, [db, profileId])
 
   return layers
 }
 
-export function useKeyData(db, layerId, profileId) {
-  const [keyData, setKeyData] = useState(new Map())
+export function useKeyData(
+  db: Database | null,
+  layerId: string | null,
+  profileId: string | null
+): Map<number, KeyData> {
+  const [keyData, setKeyData] = useState<Map<number, KeyData>>(new Map())
 
   useEffect(() => {
     if (!db || !layerId) return
 
     // First, build a map of layer IDs to their order and name
-    const layerMap = new Map()
+    const layerMap = new Map<string, LayerInfo>()
     if (profileId) {
       const layerResults = db.exec(`
         SELECT id, name, order_id FROM layers WHERE profile_id = '${profileId}' ORDER BY order_id
       `)
       if (layerResults.length > 0) {
         for (const [id, name, order] of layerResults[0].values) {
-          layerMap.set(id, { name, order })
+          layerMap.set(id as string, { name: name as string, order: order as number })
         }
       }
     }
@@ -187,17 +199,23 @@ export function useKeyData(db, layerId, profileId) {
       ORDER BY k.position_id, kb.behavior
     `)
 
-    const data = new Map()
+    const data = new Map<number, KeyData>()
     if (results.length > 0) {
       for (const [posId, actionCode, actionType, behavior, colorHex] of results[0].values) {
-        if (!data.has(posId)) {
-          data.set(posId, { press: null, hold: null })
+        const posIdNum = posId as number
+        if (!data.has(posIdNum)) {
+          data.set(posIdNum, { press: null, hold: null })
         }
-        const binding = { actionCode, actionType, colorHex, layerMap }
+        const binding = {
+          actionCode: actionCode as string,
+          actionType: actionType as string,
+          colorHex: colorHex as string | null,
+          layerMap
+        }
         if (behavior === 'hold') {
-          data.get(posId).hold = binding
+          data.get(posIdNum)!.hold = binding
         } else {
-          data.get(posId).press = binding
+          data.get(posIdNum)!.press = binding
         }
       }
     }

@@ -1,7 +1,13 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, DragEvent, ChangeEvent } from 'react'
 import { Toggle } from './Toggle'
 
-export function FileDropZone({ onFileSelect, isBeta, onBetaToggle }) {
+interface FileDropZoneProps {
+  onFileSelect: (file: File) => void
+  isBeta: boolean
+  onBetaToggle: (value: boolean) => void
+}
+
+export function FileDropZone({ onFileSelect, isBeta, onBetaToggle }: FileDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
 
   const folderName = isBeta ? 'NayaFlow-Beta' : 'NayaFlow'
@@ -9,17 +15,17 @@ export function FileDropZone({ onFileSelect, isBeta, onBetaToggle }) {
   const macPath = `~/Library/Application Support/${folderName}/${dbFileName}`
   const winPath = `%APPDATA%\\${folderName}\\${dbFileName}`
 
-  const handleDragOver = useCallback((e) => {
+  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     setIsDragging(true)
   }, [])
 
-  const handleDragLeave = useCallback((e) => {
+  const handleDragLeave = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     setIsDragging(false)
   }, [])
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     setIsDragging(false)
 
@@ -29,8 +35,8 @@ export function FileDropZone({ onFileSelect, isBeta, onBetaToggle }) {
     }
   }, [onFileSelect])
 
-  const handleFileInput = useCallback((e) => {
-    const file = e.target.files[0]
+  const handleFileInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
     if (file) {
       onFileSelect(file)
     }

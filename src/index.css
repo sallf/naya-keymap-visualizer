@@ -151,18 +151,29 @@ h1 {
   pointer-events: none;
 }
 
-/* Hold indicator */
-.hold-indicator {
-  fill: #666;
-  font-size: 8px;
+
+/* Hold banner (bottom of key) */
+.hold-banner {
+  fill: #5a5a7a;
+  stroke: none;
+}
+
+.hold-label-text {
+  fill: #2a2a4a;
+  font-size: 9px;
+  font-weight: 600;
   text-anchor: middle;
+  dominant-baseline: middle;
   pointer-events: none;
 }
 
-.hold-badge {
-  fill: #3a3a5a;
-  stroke: #5a5a7a;
-  stroke-width: 1;
+.hold-modifier-text {
+  fill: #2a2a4a;
+  font-size: 7px;
+  font-weight: 500;
+  text-anchor: start;
+  dominant-baseline: middle;
+  pointer-events: none;
 }
 
 /* Modifier badge (top-left corner) */

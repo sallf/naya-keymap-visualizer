@@ -14,12 +14,21 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
   const label = data?.press ? getKeyLabel(data.press.actionCode, data.press.actionType, data.press.layerMap) : ''
   const hasHold = data?.hold != null
 
+  // Get hold label
+  const holdLabel = hasHold ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap) : null
+  const holdIsIcon = typeof holdLabel === 'object' && holdLabel?.icon
+  const holdHasModifiers = typeof holdLabel === 'object' && holdLabel?.modifiers
+  const holdLabelText = holdIsIcon ? '' : (holdHasModifiers ? holdLabel.label : holdLabel)
+  const holdModifiers = holdHasModifiers ? holdLabel.modifiers : null
+
   const isIcon = typeof label === 'object' && label?.icon
   const hasModifiers = typeof label === 'object' && label?.modifiers
   const labelText = isIcon ? '' : (hasModifiers ? label.label : label)
   const modifiers = hasModifiers ? label.modifiers : null
   const labelClass = typeof labelText === 'string' && labelText.length > 4 ? 'small' : ''
-  const labelY = hasHold ? py + height * 0.4 : py + height / 2
+
+  const holdBannerHeight = height * 0.4
+  const labelY = hasHold ? py + (height - holdBannerHeight) / 2 : py + height / 2
 
   return (
     <g
@@ -73,23 +82,46 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
           {labelText}
         </text>
       )}
+      {/* Hold banner at bottom */}
       {hasHold && (
         <>
-          <rect
-            className="hold-badge"
-            x={px + width / 2 - 10}
-            y={py + height * 0.75 - 5}
-            width={20}
-            height={10}
-            rx={2}
+          <path
+            className="hold-banner"
+            d={`M ${px} ${py + height - holdBannerHeight}
+                L ${px + width} ${py + height - holdBannerHeight}
+                L ${px + width} ${py + height - RADIUS}
+                A ${RADIUS} ${RADIUS} 0 0 1 ${px + width - RADIUS} ${py + height}
+                L ${px + RADIUS} ${py + height}
+                A ${RADIUS} ${RADIUS} 0 0 1 ${px} ${py + height - RADIUS}
+                Z`}
           />
-          <text
-            className="hold-indicator"
-            x={px + width / 2}
-            y={py + height * 0.75 + 1}
-          >
-            •••
-          </text>
+          {holdIsIcon ? (
+            <KeyIcon
+              name={holdLabel.icon}
+              x={px + width / 2}
+              y={py + height - holdBannerHeight / 2}
+              size={14}
+            />
+          ) : (
+            <>
+              {holdModifiers && (
+                <text
+                  className="hold-modifier-text"
+                  x={px + 4}
+                  y={py + height - holdBannerHeight / 2}
+                >
+                  {holdModifiers}
+                </text>
+              )}
+              <text
+                className="hold-label-text"
+                x={px + width / 2}
+                y={py + height - holdBannerHeight / 2}
+              >
+                {holdLabelText}
+              </text>
+            </>
+          )}
         </>
       )}
       {showKeyNumber && (

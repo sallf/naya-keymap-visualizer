@@ -1,3 +1,19 @@
+// Make action codes more human readable
+function formatActionCode(actionCode) {
+  if (!actionCode) return '-'
+
+  return actionCode
+    .replace(/LGUI/g, 'Cmd')
+    .replace(/RGUI/g, 'Cmd R')
+    .replace(/LCTRL/g, 'Ctrl')
+    .replace(/RCTRL/g, 'Ctrl R')
+    .replace(/LALT/g, 'Alt')
+    .replace(/RALT/g, 'Alt R')
+    .replace(/LSHIFT/g, 'Shift')
+    .replace(/RSHIFT/g, 'Shift R')
+    .replace(/_/g, ' ')
+}
+
 export function Tooltip({ pos, data, x, y }) {
   if (!data) return null
 
@@ -11,12 +27,12 @@ export function Tooltip({ pos, data, x, y }) {
     >
       {data.press && (
         <>
-          <div className="tt-action">{data.press.actionCode || '-'}</div>
-          <div className="tt-type">Type: {data.press.actionType} | Position: {pos}</div>
+          <div className="tt-action">{formatActionCode(data.press.actionCode)}</div>
+          <div className="tt-type">Position: {pos}</div>
         </>
       )}
       {data.hold && (
-        <div className="tt-hold">Hold: {data.hold.actionCode}</div>
+        <div className="tt-hold">Hold: {formatActionCode(data.hold.actionCode)}</div>
       )}
     </div>
   )

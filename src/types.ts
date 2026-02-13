@@ -43,8 +43,9 @@ export interface Layout {
 
 // Override types
 export interface OverrideValue {
-  type: 'text' | 'icon'
+  type: 'text' | 'icon' | 'external-icon'
   value: string
+  // For external-icon: value = "simpleicons:slack" or "lucide:accessibility"
 }
 
 export interface Override {

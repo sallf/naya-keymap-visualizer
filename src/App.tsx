@@ -183,8 +183,11 @@ function App() {
 
       <main>
         <div className="keyboard-container">
-          <button className="btn-link keyboard-clear" onClick={handleClearKeymap}>
-            Clear Configuration
+          <button
+            className="btn-link keyboard-clear"
+            onClick={handleClearKeymap}
+          >
+            Clear Configuration File
           </button>
           <Keyboard
             keyData={keyData}

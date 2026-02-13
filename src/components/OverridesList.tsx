@@ -1,6 +1,7 @@
 import * as icons from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Override } from '../types'
+import { getExternalIconUrl, parseExternalIcon } from './KeyIcon'
 
 // Icon name to component mapping (subset for display)
 const iconComponents: Record<string, LucideIcon> = {
@@ -85,6 +86,25 @@ export function OverridesList({ overrides, onClear, onClearAll }: OverridesListP
           const holdOverride = override.hold
           const PressIcon = pressOverride?.type === 'icon' ? iconComponents[pressOverride.value] : null
           const HoldIcon = holdOverride?.type === 'icon' ? iconComponents[holdOverride.value] : null
+
+          // Handle external icons
+          const pressExternal = pressOverride?.type === 'external-icon' ? parseExternalIcon(pressOverride.value) : null
+          const holdExternal = holdOverride?.type === 'external-icon' ? parseExternalIcon(holdOverride.value) : null
+
+          const renderOverrideValue = (
+            override: typeof pressOverride,
+            Icon: LucideIcon | null,
+            external: ReturnType<typeof parseExternalIcon>
+          ) => {
+            if (!override) return null
+            if (Icon) return <Icon size={14} />
+            if (external) {
+              const url = getExternalIconUrl(external.library, external.name)
+              return <img src={url} alt={external.name} width={14} height={14} className="external-icon-preview" />
+            }
+            return override.value
+          }
+
           return (
             <div key={keyPos} className="override-item">
               <span className="override-key">Key {keyPos}</span>
@@ -92,13 +112,13 @@ export function OverridesList({ overrides, onClear, onClearAll }: OverridesListP
                 {pressOverride && (
                   <span className="override-part">
                     <span className="override-label">Press:</span>
-                    {PressIcon ? <PressIcon size={14} /> : pressOverride.value}
+                    {renderOverrideValue(pressOverride, PressIcon, pressExternal)}
                   </span>
                 )}
                 {holdOverride && (
                   <span className="override-part">
                     <span className="override-label">Hold:</span>
-                    {HoldIcon ? <HoldIcon size={14} /> : holdOverride.value}
+                    {renderOverrideValue(holdOverride, HoldIcon, holdExternal)}
                   </span>
                 )}
               </span>

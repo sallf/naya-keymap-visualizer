@@ -1,6 +1,29 @@
 import * as icons from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
+// Helper to get external icon URL
+export function getExternalIconUrl(library: string, iconName: string): string {
+  switch (library) {
+    case 'lucide':
+      return `https://cdn.jsdelivr.net/npm/lucide-static/icons/${iconName}.svg`
+    case 'heroicons':
+      return `https://cdn.jsdelivr.net/npm/heroicons@2.2.0/24/outline/${iconName}.svg`
+    case 'tabler':
+      return `https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/outline/${iconName}.svg`
+    case 'feather':
+      return `https://cdn.jsdelivr.net/npm/feather-icons/dist/icons/${iconName}.svg`
+    default:
+      return ''
+  }
+}
+
+// Parse external icon value (e.g., "simpleicons:slack" -> { library: "simpleicons", name: "slack" })
+export function parseExternalIcon(value: string): { library: string; name: string } | null {
+  if (!value.includes(':')) return null
+  const [library, name] = value.split(':')
+  return { library, name }
+}
+
 // Map icon names to Lucide components
 const iconMap: Record<string, LucideIcon> = {
   // Shortcuts
@@ -73,6 +96,42 @@ interface KeyIconProps {
 }
 
 export function KeyIcon({ name, x, y, size = 16, color = '#fff' }: KeyIconProps) {
+  // Check if it's an external icon
+  const externalIcon = parseExternalIcon(name)
+  if (externalIcon) {
+    const url = getExternalIconUrl(externalIcon.library, externalIcon.name)
+
+    return (
+      <foreignObject
+        x={x - size / 2}
+        y={y - size / 2}
+        width={size}
+        height={size}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <img
+            src={url}
+            alt={externalIcon.name}
+            width={size}
+            height={size}
+            style={{
+              // Apply CSS filter to make stroke icons white (or other color)
+              filter: color === '#fff' ? 'brightness(0) invert(1)' : undefined,
+            }}
+          />
+        </div>
+      </foreignObject>
+    )
+  }
+
   const IconComponent = iconMap[name]
 
   if (!IconComponent) {

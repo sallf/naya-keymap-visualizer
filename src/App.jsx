@@ -19,7 +19,7 @@ function App() {
   const [selectedLayer, setSelectedLayer] = useState(null)
 
   const layers = useLayers(db, selectedProfile)
-  const keyData = useKeyData(db, selectedLayer)
+  const keyData = useKeyData(db, selectedLayer, selectedProfile)
 
   // Set initial profile when profiles load
   useEffect(() => {

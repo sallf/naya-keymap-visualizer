@@ -6,10 +6,10 @@ import { Tooltip } from './Tooltip'
 export function Keyboard({ keyData }) {
   const [tooltip, setTooltip] = useState(null)
 
-  const leftWidth = 9 * (U + GAP)
-  const rightWidth = 10 * (U + GAP)
+  const leftWidth = 8 * (U + GAP)
+  const rightWidth = 9 * (U + GAP)
   const height = 6.5 * (U + GAP)
-  const centerGap = 60
+  const centerGap = 40
   const totalWidth = leftWidth + centerGap + rightWidth + 40
 
   const handleHover = (pos, data, event) => {

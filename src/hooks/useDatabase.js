@@ -160,11 +160,24 @@ export function useLayers(db, profileId) {
   return layers
 }
 
-export function useKeyData(db, layerId) {
+export function useKeyData(db, layerId, profileId) {
   const [keyData, setKeyData] = useState(new Map())
 
   useEffect(() => {
     if (!db || !layerId) return
+
+    // First, build a map of layer IDs to their order and name
+    const layerMap = new Map()
+    if (profileId) {
+      const layerResults = db.exec(`
+        SELECT id, name, order_id FROM layers WHERE profile_id = '${profileId}' ORDER BY order_id
+      `)
+      if (layerResults.length > 0) {
+        for (const [id, name, order] of layerResults[0].values) {
+          layerMap.set(id, { name, order })
+        }
+      }
+    }
 
     const results = db.exec(`
       SELECT k.position_id, kb.action_code, kb.action_type, kb.behavior, k.color_hex
@@ -180,7 +193,7 @@ export function useKeyData(db, layerId) {
         if (!data.has(posId)) {
           data.set(posId, { press: null, hold: null })
         }
-        const binding = { actionCode, actionType, colorHex }
+        const binding = { actionCode, actionType, colorHex, layerMap }
         if (behavior === 'hold') {
           data.get(posId).hold = binding
         } else {
@@ -189,7 +202,7 @@ export function useKeyData(db, layerId) {
       }
     }
     setKeyData(data)
-  }, [db, layerId])
+  }, [db, layerId, profileId])
 
   return keyData
 }

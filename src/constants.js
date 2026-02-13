@@ -50,121 +50,106 @@ export const U = 44 // Base unit size in pixels
 export const GAP = 4 // Gap between keys
 export const RADIUS = 6 // Corner radius
 
-// Layout definition
+// Layout definition - simplified with straight rows
 export const LAYOUT = {
   left: [
-    // Far left column (small keys)
-    { x: 0, y: 0, w: 0.85, h: 1, pos: 0 },
-    { x: 0, y: 1.1, w: 0.85, h: 1, pos: 16 },
-    { x: 0, y: 2.2, w: 0.85, h: 1, pos: 30 },
-    { x: 0, y: 3.3, w: 0.85, h: 1, pos: 46 },
-    { x: 0, y: 4.4, w: 0.85, h: 1, pos: 62 },
-    { x: 0, y: 5.5, w: 0.85, h: 1, pos: 63 },
+    // Row 0 - Number row
+    { x: 0, y: 0, w: 1, h: 1, pos: 0 },    // Esc
+    { x: 1, y: 0, w: 1, h: 1, pos: 1 },    // `~
+    { x: 2, y: 0, w: 1, h: 1, pos: 2 },    // 1
+    { x: 3, y: 0, w: 1, h: 1, pos: 3 },    // 2
+    { x: 4, y: 0, w: 1, h: 1, pos: 4 },    // 3
+    { x: 5, y: 0, w: 1, h: 1, pos: 5 },    // 4
+    { x: 6, y: 0, w: 1, h: 1, pos: 6 },    // 5
 
-    // Second column
-    { x: 1, y: 0.3, w: 1, h: 1, pos: 1 },
-    { x: 1, y: 1.4, w: 1, h: 1, pos: 17 },
-    { x: 1, y: 2.5, w: 1, h: 1, pos: 31 },
-    { x: 1, y: 3.6, w: 1, h: 1, pos: 47 },
-    { x: 1, y: 4.7, w: 1, h: 1, pos: 64 },
+    // Row 1 - QWERTY row
+    { x: 0, y: 1, w: 1, h: 1, pos: 16 },   // Tab
+    { x: 1, y: 1, w: 1, h: 1, pos: 17 },   // Tab
+    { x: 2, y: 1, w: 1, h: 1, pos: 18 },   // Q
+    { x: 3, y: 1, w: 1, h: 1, pos: 19 },   // W
+    { x: 4, y: 1, w: 1, h: 1, pos: 20 },   // E
+    { x: 5, y: 1, w: 1, h: 1, pos: 21 },   // R
+    { x: 6, y: 1, w: 1, h: 1, pos: 22 },   // T
+    { x: 7, y: 0, w: 1, h: 2, pos: 7 },    // Right Click (double height, starts at row 0)
 
-    // Third column
-    { x: 2.1, y: 0, w: 1, h: 1, pos: 2 },
-    { x: 2.1, y: 1.1, w: 1, h: 1, pos: 18 },
-    { x: 2.1, y: 2.2, w: 1, h: 1, pos: 32 },
-    { x: 2.1, y: 3.3, w: 1, h: 1, pos: 48 },
-    { x: 2.1, y: 4.7, w: 1, h: 1, pos: 65 },
+    // Row 2 - ASDF row
+    { x: 0, y: 2, w: 1, h: 1, pos: 30 },   // Caps
+    { x: 1, y: 2, w: 1, h: 1, pos: 31 },   // Caps
+    { x: 2, y: 2, w: 1, h: 1, pos: 32 },   // A
+    { x: 3, y: 2, w: 1, h: 1, pos: 33 },   // S
+    { x: 4, y: 2, w: 1, h: 1, pos: 34 },   // D
+    { x: 5, y: 2, w: 1, h: 1, pos: 35 },   // F
+    { x: 6, y: 2, w: 1, h: 1, pos: 36 },   // G
 
-    // Fourth column
-    { x: 3.2, y: 0, w: 1, h: 1, pos: 3 },
-    { x: 3.2, y: 1.1, w: 1, h: 1, pos: 19 },
-    { x: 3.2, y: 2.2, w: 1, h: 1, pos: 33 },
-    { x: 3.2, y: 3.3, w: 1, h: 1, pos: 49 },
+    // Row 3 - ZXCV row
+    { x: 0, y: 3, w: 1, h: 1, pos: 46 },   // Shift
+    { x: 1, y: 3, w: 1, h: 1, pos: 47 },   // Shift
+    { x: 2, y: 3, w: 1, h: 1, pos: 48 },   // Z
+    { x: 3, y: 3, w: 1, h: 1, pos: 49 },   // X
+    { x: 4, y: 3, w: 1, h: 1, pos: 50 },   // C
+    { x: 5, y: 3, w: 1, h: 1, pos: 51 },   // V
+    { x: 6, y: 3, w: 1, h: 1, pos: 52 },   // B
 
-    // Fifth column
-    { x: 4.3, y: 0, w: 1, h: 1, pos: 4 },
-    { x: 4.3, y: 1.1, w: 1, h: 1, pos: 20 },
-    { x: 4.3, y: 2.2, w: 1, h: 1, pos: 34 },
-    { x: 4.3, y: 3.3, w: 1, h: 1, pos: 50 },
+    // Row 4 - Bottom row
+    { x: 0, y: 4, w: 1, h: 1, pos: 62 },
+    { x: 1, y: 4, w: 1, h: 1, pos: 63 },
+    { x: 2, y: 4, w: 1, h: 1, pos: 64 },
+    { x: 3, y: 4, w: 1, h: 1, pos: 65 },
+    { x: 4, y: 4, w: 2, h: 1, pos: 66 },   // Tab (double width)
 
-    // Sixth column
-    { x: 5.4, y: 0, w: 1, h: 1, pos: 5 },
-    { x: 5.4, y: 1.1, w: 1, h: 1, pos: 21 },
-    { x: 5.4, y: 2.2, w: 1, h: 1, pos: 35 },
-    { x: 5.4, y: 3.3, w: 1, h: 1, pos: 51 },
-
-    // Seventh column
-    { x: 6.5, y: 0, w: 1, h: 1, pos: 6 },
-    { x: 6.5, y: 1.1, w: 1, h: 1, pos: 22 },
-    { x: 6.5, y: 2.2, w: 1, h: 1, pos: 36 },
-    { x: 6.5, y: 3.3, w: 1, h: 1, pos: 52 },
-
-    // Eighth column (inner key - mouse button)
-    { x: 7.6, y: 1.1, w: 1, h: 1.5, pos: 7 },
-
-    // Left thumb cluster
-    { x: 4.5, y: 5.2, w: 1, h: 1, pos: 37 },
-    { x: 5.6, y: 5.2, w: 1, h: 1, pos: 53 },
-    { x: 6.7, y: 5.2, w: 1, h: 1, pos: 67 },
+    // Thumb cluster (row 5, separate from main keys) - L to R: Layer 1, Layer 2, Shift
+    { x: 5, y: 5, w: 1, h: 1, pos: 37 },   // Layer 1
+    { x: 6, y: 5, w: 1, h: 1, pos: 53 },   // Layer 2
+    { x: 7, y: 5, w: 1, h: 1, pos: 67 },   // Shift
   ],
 
   right: [
-    // First column (inner key - mouse button)
-    { x: 0, y: 1.1, w: 1, h: 1.5, pos: 8 },
+    // Row 0 - Number row
+    { x: 1, y: 0, w: 1, h: 1, pos: 9 },    // 6
+    { x: 2, y: 0, w: 1, h: 1, pos: 10 },   // 7
+    { x: 3, y: 0, w: 1, h: 1, pos: 11 },   // 8
+    { x: 4, y: 0, w: 1, h: 1, pos: 12 },   // 9
+    { x: 5, y: 0, w: 1, h: 1, pos: 13 },   // 0
+    { x: 6, y: 0, w: 1, h: 1, pos: 14 },   // -
+    { x: 7, y: 0, w: 1, h: 1, pos: 15 },   // =
 
-    // Second column (Y column)
-    { x: 1.1, y: 0, w: 1, h: 1, pos: 9 },
-    { x: 1.1, y: 1.1, w: 1, h: 1, pos: 23 },
-    { x: 1.1, y: 2.2, w: 1, h: 1, pos: 39 },
-    { x: 1.1, y: 3.3, w: 1, h: 1, pos: 55 },
+    // Row 1 - YUIOP row
+    { x: 0, y: 0, w: 1, h: 2, pos: 8 },    // Left Click (double height, starts at row 0)
+    { x: 1, y: 1, w: 1, h: 1, pos: 23 },   // Y
+    { x: 2, y: 1, w: 1, h: 1, pos: 24 },   // U
+    { x: 3, y: 1, w: 1, h: 1, pos: 25 },   // I
+    { x: 4, y: 1, w: 1, h: 1, pos: 26 },   // O
+    { x: 5, y: 1, w: 1, h: 1, pos: 27 },   // P
+    { x: 6, y: 1, w: 1, h: 1, pos: 28 },   // [
+    { x: 7, y: 1, w: 1, h: 1, pos: 29 },   // ]
 
-    // Third column (U column)
-    { x: 2.2, y: 0, w: 1, h: 1, pos: 10 },
-    { x: 2.2, y: 1.1, w: 1, h: 1, pos: 24 },
-    { x: 2.2, y: 2.2, w: 1, h: 1, pos: 40 },
-    { x: 2.2, y: 3.3, w: 1, h: 1, pos: 56 },
+    // Row 2 - HJKL row
+    { x: 1, y: 2, w: 1, h: 1, pos: 39 },   // H
+    { x: 2, y: 2, w: 1, h: 1, pos: 40 },   // J
+    { x: 3, y: 2, w: 1, h: 1, pos: 41 },   // K
+    { x: 4, y: 2, w: 1, h: 1, pos: 42 },   // L
+    { x: 5, y: 2, w: 1, h: 1, pos: 43 },   // ;
+    { x: 6, y: 2, w: 1, h: 1, pos: 44 },   // '
+    { x: 7, y: 2, w: 1, h: 1, pos: 45 },   // backslash
 
-    // Fourth column (I column)
-    { x: 3.3, y: 0, w: 1, h: 1, pos: 11 },
-    { x: 3.3, y: 1.1, w: 1, h: 1, pos: 25 },
-    { x: 3.3, y: 2.2, w: 1, h: 1, pos: 41 },
-    { x: 3.3, y: 3.3, w: 1, h: 1, pos: 57 },
+    // Row 3 - NM row
+    { x: 1, y: 3, w: 1, h: 1, pos: 55 },   // N
+    { x: 2, y: 3, w: 1, h: 1, pos: 56 },   // M
+    { x: 3, y: 3, w: 1, h: 1, pos: 57 },   // ,
+    { x: 4, y: 3, w: 1, h: 1, pos: 58 },   // .
+    { x: 5, y: 3, w: 1, h: 1, pos: 59 },   // /
+    { x: 6, y: 3, w: 1, h: 1, pos: 60 },   // Shift
+    { x: 7, y: 3, w: 1, h: 1, pos: 61 },   // Shift
 
-    // Fifth column (O column)
-    { x: 4.4, y: 0, w: 1, h: 1, pos: 12 },
-    { x: 4.4, y: 1.1, w: 1, h: 1, pos: 26 },
-    { x: 4.4, y: 2.2, w: 1, h: 1, pos: 42 },
-    { x: 4.4, y: 3.3, w: 1, h: 1, pos: 58 },
+    // Row 5 - Thumb cluster (separate from main keys) - L to R: Del, Backspace, Return
+    { x: 0, y: 5, w: 1, h: 1, pos: 68 },   // Del (fn+del)
+    { x: 1, y: 5, w: 1, h: 1, pos: 54 },   // Backspace
+    { x: 2, y: 5, w: 1, h: 1, pos: 38 },   // Return
 
-    // Sixth column (P column)
-    { x: 5.5, y: 0, w: 1, h: 1, pos: 13 },
-    { x: 5.5, y: 1.1, w: 1, h: 1, pos: 27 },
-    { x: 5.5, y: 2.2, w: 1, h: 1, pos: 43 },
-    { x: 5.5, y: 3.3, w: 1, h: 1, pos: 59 },
-
-    // Seventh column ([ column)
-    { x: 6.6, y: 0.3, w: 1, h: 1, pos: 14 },
-    { x: 6.6, y: 1.4, w: 1, h: 1, pos: 28 },
-    { x: 6.6, y: 2.5, w: 1, h: 1, pos: 44 },
-    { x: 6.6, y: 3.6, w: 1, h: 1, pos: 60 },
-    { x: 6.6, y: 4.7, w: 1, h: 1, pos: 70 },
-
-    // Eighth column (] column)
-    { x: 7.7, y: 0.3, w: 1, h: 1, pos: 15 },
-    { x: 7.7, y: 1.4, w: 1, h: 1, pos: 29 },
-    { x: 7.7, y: 2.5, w: 1, h: 1, pos: 45 },
-    { x: 7.7, y: 3.6, w: 1, h: 1, pos: 61 },
-    { x: 7.7, y: 4.7, w: 1, h: 1, pos: 71 },
-
-    // Far right column (small keys)
-    { x: 8.8, y: 0.3, w: 0.85, h: 1, pos: 69 },
-    { x: 8.8, y: 1.4, w: 0.85, h: 1, pos: 66 },
-    { x: 8.8, y: 2.5, w: 0.85, h: 1, pos: 72 },
-    { x: 8.8, y: 3.6, w: 0.85, h: 1, pos: 73 },
-
-    // Right thumb cluster
-    { x: 1.1, y: 4.7, w: 1, h: 1, pos: 68 },
-    { x: 2.2, y: 4.7, w: 1, h: 1, pos: 54 },
-    { x: 3.3, y: 4.7, w: 1, h: 1, pos: 38 },
+    { x: 2, y: 4, w: 2, h: 1, pos: 69 },   // Space (double width under M and ,)
+    { x: 4, y: 4, w: 1, h: 1, pos: 70 },
+    { x: 5, y: 4, w: 1, h: 1, pos: 71 },
+    { x: 6, y: 4, w: 1, h: 1, pos: 72 },
+    { x: 7, y: 4, w: 1, h: 1, pos: 73 },
   ],
 }

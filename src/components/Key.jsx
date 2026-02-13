@@ -10,7 +10,7 @@ export function Key({ keyDef, data, onHover, onLeave }) {
   const height = h * U + (h - 1) * GAP
 
   const typeClass = data?.press ? getTypeClass(data.press.actionType) : 'none'
-  const label = data?.press ? getKeyLabel(data.press.actionCode, data.press.actionType) : '-'
+  const label = data?.press ? getKeyLabel(data.press.actionCode, data.press.actionType, data.press.layerMap) : '-'
   const hasHold = data?.hold != null
 
   const labelClass = label.length > 4 ? 'small' : ''

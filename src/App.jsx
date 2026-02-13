@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useDatabase, useProfiles, useLayers, useKeyData } from './hooks/useDatabase'
+import { useOverrides } from './hooks/useOverrides'
 import { Keyboard } from './components/Keyboard'
 import { FileDropZone } from './components/FileDropZone'
 import { Toggle } from './components/Toggle'
+import { ManualOverrideModal } from './components/ManualOverrideModal'
+import { OverridesList } from './components/OverridesList'
 
 function App() {
   const [isBeta, setIsBeta] = useState(() => {
@@ -19,8 +22,13 @@ function App() {
   const [selectedProfile, setSelectedProfile] = useState(null)
   const [selectedLayer, setSelectedLayer] = useState(null)
   const [showKeyNumbers, setShowKeyNumbers] = useState(false)
+  const [modalKey, setModalKey] = useState(null)
+  const [modalLabel, setModalLabel] = useState('')
+  const [modalHoldLabel, setModalHoldLabel] = useState('')
+  const [modalHasHold, setModalHasHold] = useState(false)
 
   const layers = useLayers(db, selectedProfile)
+  const { overrides, setOverride, clearOverride, clearAllOverrides } = useOverrides(selectedLayer)
   const keyData = useKeyData(db, selectedLayer, selectedProfile)
 
   // Set initial profile when profiles load
@@ -41,6 +49,26 @@ function App() {
   useEffect(() => {
     setSelectedLayer(null)
   }, [selectedProfile])
+
+  const handleKeyClick = (keyPos, label, holdLabel, hasHold) => {
+    const labelStr = typeof label === 'object' && label !== null
+      ? (label.icon || label.label || '')
+      : (label || '')
+    const holdLabelStr = typeof holdLabel === 'object' && holdLabel !== null
+      ? (holdLabel.icon || holdLabel.label || '')
+      : (holdLabel || '')
+    setModalKey(keyPos)
+    setModalLabel(labelStr)
+    setModalHoldLabel(holdLabelStr)
+    setModalHasHold(hasHold)
+  }
+
+  const handleModalClose = () => {
+    setModalKey(null)
+    setModalLabel('')
+    setModalHoldLabel('')
+    setModalHasHold(false)
+  }
 
   if (loading) {
     return (
@@ -112,7 +140,12 @@ function App() {
       </header>
 
       <main>
-        <Keyboard keyData={keyData} showKeyNumbers={showKeyNumbers} />
+        <Keyboard
+          keyData={keyData}
+          showKeyNumbers={showKeyNumbers}
+          overrides={overrides}
+          onKeyClick={handleKeyClick}
+        />
       </main>
 
       <div className="legend">
@@ -121,6 +154,22 @@ function App() {
         <div className="legend-item"><div className="legend-color layer"></div> Layer</div>
         <div className="legend-item"><div className="legend-color special"></div> Special</div>
       </div>
+
+      <OverridesList
+        overrides={overrides}
+        onClear={clearOverride}
+        onClearAll={clearAllOverrides}
+      />
+
+      <ManualOverrideModal
+        keyPos={modalKey}
+        currentLabel={modalLabel}
+        currentHoldLabel={modalHoldLabel}
+        hasHold={modalHasHold}
+        onSave={setOverride}
+        onClose={handleModalClose}
+        onClear={clearOverride}
+      />
     </div>
   )
 }

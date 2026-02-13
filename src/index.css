@@ -473,3 +473,340 @@ h1 {
   border-radius: 3px;
   font-size: 0.75rem;
 }
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #252545;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #3a3a5a;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  color: #fff;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-current {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.modal-current strong {
+  color: #aaa;
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 10px;
+  background: #1a1a2e;
+  border: 1px solid #3a3a5a;
+  border-radius: 6px;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+
+.mode-tab:hover {
+  border-color: #5a5a7a;
+}
+
+.mode-tab.active {
+  background: #3a3a5a;
+  border-color: #5a5a7a;
+  color: #fff;
+}
+
+.text-input-section input {
+  width: 100%;
+  padding: 12px;
+  background: #1a1a2e;
+  border: 1px solid #3a3a5a;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.text-input-section input:focus {
+  outline: none;
+  border-color: #5a5a7a;
+}
+
+.input-hint {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+
+/* Override Section (Press/Hold) */
+.override-section {
+  padding: 16px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.override-section:last-child {
+  margin-bottom: 0;
+}
+
+.override-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.override-section-title {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.override-section-current {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.override-section-current strong {
+  color: #aaa;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.icon-option {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  border: 1px solid #3a3a5a;
+  border-radius: 6px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.icon-option:hover {
+  border-color: #5a5a7a;
+  color: #fff;
+}
+
+.icon-option.selected {
+  background: #3a3a5a;
+  border-color: #7a7aaa;
+  color: #fff;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid #3a3a5a;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-cancel, .btn-save, .btn-clear {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.btn-cancel {
+  background: #3a3a5a;
+  color: #aaa;
+}
+
+.btn-cancel:hover {
+  background: #4a4a6a;
+}
+
+.btn-save {
+  background: #4a6a4a;
+  color: #fff;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #5a7a5a;
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-clear {
+  background: transparent;
+  color: #a66;
+  border: 1px solid #633;
+}
+
+.btn-clear:hover {
+  background: #422;
+  border-color: #844;
+}
+
+/* Overrides List */
+.overrides-list {
+  margin-top: 20px;
+  background: #252545;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.overrides-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.overrides-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.btn-clear-all {
+  padding: 6px 12px;
+  background: transparent;
+  color: #a66;
+  border: 1px solid #633;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-clear-all:hover {
+  background: #422;
+  border-color: #844;
+}
+
+.overrides-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.override-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #1a1a2e;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.override-key {
+  color: #888;
+}
+
+.override-value {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.override-part {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.override-label {
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.override-remove {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+}
+
+.override-remove:hover {
+  color: #a66;
+}
+
+/* Key with override indicator */
+.key-group.has-override .key-shape {
+  stroke: #7a7aaa;
+  stroke-width: 2;
+}

@@ -2,7 +2,7 @@ import { U, GAP, RADIUS } from '../constants'
 import { getTypeClass, getKeyLabel } from '../utils'
 import { KeyIcon } from './KeyIcon'
 
-export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
+export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, onClick }) {
   const { x, y, w, h, pos } = keyDef
 
   const px = x * (U + GAP)
@@ -11,11 +11,28 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
   const height = h * U + (h - 1) * GAP
 
   const typeClass = data?.press ? getTypeClass(data.press.actionType) : 'none'
-  const label = data?.press ? getKeyLabel(data.press.actionCode, data.press.actionType, data.press.layerMap) : ''
+  const originalLabel = data?.press ? getKeyLabel(data.press.actionCode, data.press.actionType, data.press.layerMap) : ''
   const hasHold = data?.hold != null
 
-  // Get hold label
-  const holdLabel = hasHold ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap) : null
+  // Apply press override if exists
+  let label = originalLabel
+  if (override?.press) {
+    if (override.press.type === 'text') {
+      label = override.press.value
+    } else if (override.press.type === 'icon') {
+      label = { icon: override.press.value }
+    }
+  }
+
+  // Get hold label and apply hold override if exists
+  let holdLabel = hasHold ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap) : null
+  if (hasHold && override?.hold) {
+    if (override.hold.type === 'text') {
+      holdLabel = override.hold.value
+    } else if (override.hold.type === 'icon') {
+      holdLabel = { icon: override.hold.value }
+    }
+  }
   const holdIsIcon = typeof holdLabel === 'object' && holdLabel?.icon
   const holdHasModifiers = typeof holdLabel === 'object' && holdLabel?.modifiers
   const holdLabelText = holdIsIcon ? '' : (holdHasModifiers ? holdLabel.label : holdLabel)
@@ -33,9 +50,11 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
 
   return (
     <g
-      className={`key-group ${typeClass}`}
+      className={`key-group ${typeClass}${override ? ' has-override' : ''}`}
       onMouseEnter={() => onHover?.(pos, data)}
       onMouseLeave={() => onLeave?.()}
+      onClick={() => onClick?.(pos, originalLabel, hasHold ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap) : null, hasHold)}
+      style={{ cursor: 'pointer' }}
     >
       <rect
         className="key-shape"

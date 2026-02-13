@@ -1,5 +1,24 @@
 import { KEY_LABELS } from './constants'
 
+// Map shortcut combos to icon names (lucide-react icon names)
+const SHORTCUT_ICONS = {
+  'LGUI + C': 'copy',
+  'LGUI + V': 'clipboard-paste',
+  'LGUI + X': 'scissors',
+  'LGUI + Z': 'undo-2',
+  'LGUI + LSHIFT + Z': 'redo-2',
+  'LGUI + S': 'save',
+  'LGUI + A': 'select-all',  // text-select doesn't exist, we'll use a label
+  'LGUI + F': 'search',
+  'LGUI + N': 'file-plus',
+  'LGUI + O': 'folder-open',
+  'LGUI + P': 'printer',
+  'LGUI + W': 'x',
+  'LGUI + Q': 'power',
+  'LGUI + T': 'plus',
+  'LGUI + R': 'refresh-cw',
+}
+
 // Map action types to their display names
 const LAYER_TYPE_LABELS = {
   'layer_polite_hold': 'Hold',
@@ -29,7 +48,7 @@ export function getTypeClass(actionType) {
 }
 
 export function getKeyLabel(actionCode, actionType, layerMap) {
-  if (!actionCode) return '-'
+  if (!actionCode) return ''
 
   // Handle disabled keys
   if (actionType === 'none' && actionCode === 'DISABLE') {
@@ -56,6 +75,10 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
   }
 
   if (actionType === 'shortcut_alias') {
+    // Check if this shortcut has an icon
+    if (SHORTCUT_ICONS[actionCode]) {
+      return { icon: SHORTCUT_ICONS[actionCode] }
+    }
     return actionCode.replace(/LGUI \+ |LSHIFT \+ |LCTRL \+ |LALT \+ /g, '').substring(0, 6)
   }
 

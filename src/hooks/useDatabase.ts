@@ -3,6 +3,10 @@ import type { Profile, Layer, KeyData, LayerInfo } from '../types'
 
 const STORAGE_KEY = 'naya-keymap-db'
 
+export function clearStoredDatabase(): void {
+  localStorage.removeItem(STORAGE_KEY)
+}
+
 // Convert ArrayBuffer to base64 for storage
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)

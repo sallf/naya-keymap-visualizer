@@ -5,7 +5,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: #1a1a2e;
   color: #eee;
   min-height: 100vh;
@@ -29,6 +30,30 @@ header {
 h1 {
   font-size: 1.8rem;
   color: #fff;
+}
+
+.keyboard-container {
+  position: relative;
+}
+
+.keyboard-clear {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 10;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-link:hover {
+  color: #888;
 }
 
 .controls {
@@ -131,7 +156,8 @@ h1 {
 /* Key labels */
 .key-label {
   fill: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 11px;
   font-weight: 500;
   text-anchor: middle;
@@ -145,12 +171,12 @@ h1 {
 
 .key-sublabel {
   fill: #888;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 7px;
   text-anchor: middle;
   pointer-events: none;
 }
-
 
 /* Hold banner (bottom of key) */
 .hold-banner {
@@ -199,7 +225,8 @@ h1 {
 }
 
 /* Loading and error states */
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   padding: 40px;
   background: #252545;
@@ -284,10 +311,22 @@ h1 {
   border: 1px solid;
 }
 
-.legend-color.key { background: #2a2a4a; border-color: #5a5a7a; }
-.legend-color.modifier { background: #3a2a4a; border-color: #6a4a7a; }
-.legend-color.layer { background: #2a4a3a; border-color: #4a7a5a; }
-.legend-color.special { background: #4a3a2a; border-color: #7a5a4a; }
+.legend-color.key {
+  background: #2a2a4a;
+  border-color: #5a5a7a;
+}
+.legend-color.modifier {
+  background: #3a2a4a;
+  border-color: #6a4a7a;
+}
+.legend-color.layer {
+  background: #2a4a3a;
+  border-color: #4a7a5a;
+}
+.legend-color.special {
+  background: #4a3a2a;
+  border-color: #7a5a4a;
+}
 
 /* File Drop Zone */
 .file-drop-zone-container {
@@ -392,7 +431,7 @@ h1 {
 
 .toggle-slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 12px;
   width: 12px;
   left: 3px;
@@ -671,7 +710,9 @@ h1 {
   gap: 8px;
 }
 
-.btn-cancel, .btn-save, .btn-clear {
+.btn-cancel,
+.btn-save,
+.btn-clear {
   padding: 10px 16px;
   border-radius: 6px;
   font-size: 0.9rem;

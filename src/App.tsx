@@ -1,5 +1,11 @@
-import { useState, useEffect, ChangeEvent } from 'react'
-import { useDatabase, useProfiles, useLayers, useKeyData } from './hooks/useDatabase'
+import { useState, useEffect, ChangeEvent, useCallback } from 'react'
+import {
+  useDatabase,
+  useProfiles,
+  useLayers,
+  useKeyData,
+  clearStoredDatabase,
+} from './hooks/useDatabase'
 import { useOverrides } from './hooks/useOverrides'
 import { Keyboard } from './components/Keyboard'
 import { FileDropZone } from './components/FileDropZone'
@@ -29,7 +35,8 @@ function App() {
   const [modalHasHold, setModalHasHold] = useState(false)
 
   const layers = useLayers(db, selectedProfile)
-  const { overrides, setOverride, clearOverride, clearAllOverrides } = useOverrides(selectedLayer)
+  const { overrides, setOverride, clearOverride, clearAllOverrides } =
+    useOverrides(selectedLayer)
   const keyData = useKeyData(db, selectedLayer, selectedProfile)
 
   // Set initial profile when profiles load
@@ -51,13 +58,28 @@ function App() {
     setSelectedLayer(null)
   }, [selectedProfile])
 
-  const handleKeyClick = (keyPos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => {
-    const labelStr = typeof label === 'object' && label !== null
-      ? ('icon' in label ? label.icon : 'label' in label ? label.label : '')
-      : (label || '')
-    const holdLabelStr = typeof holdLabel === 'object' && holdLabel !== null
-      ? ('icon' in holdLabel ? holdLabel.icon : 'label' in holdLabel ? holdLabel.label : '')
-      : (holdLabel || '')
+  const handleKeyClick = (
+    keyPos: number,
+    label: KeyLabel,
+    holdLabel: KeyLabel | null,
+    hasHold: boolean,
+  ) => {
+    const labelStr =
+      typeof label === 'object' && label !== null
+        ? 'icon' in label
+          ? label.icon
+          : 'label' in label
+            ? label.label
+            : ''
+        : label || ''
+    const holdLabelStr =
+      typeof holdLabel === 'object' && holdLabel !== null
+        ? 'icon' in holdLabel
+          ? holdLabel.icon
+          : 'label' in holdLabel
+            ? holdLabel.label
+            : ''
+        : holdLabel || ''
     setModalKey(keyPos)
     setModalLabel(labelStr)
     setModalHoldLabel(holdLabelStr)
@@ -78,6 +100,17 @@ function App() {
   const handleLayerChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelectedLayer(e.target.value)
   }
+
+  const handleClearKeymap = useCallback(() => {
+    if (
+      confirm(
+        'Clear stored configuration? You will need to reload the database file.',
+      )
+    ) {
+      clearStoredDatabase()
+      window.location.reload()
+    }
+  }, [])
 
   if (loading) {
     return (
@@ -149,19 +182,32 @@ function App() {
       </header>
 
       <main>
-        <Keyboard
-          keyData={keyData}
-          showKeyNumbers={showKeyNumbers}
-          overrides={overrides}
-          onKeyClick={handleKeyClick}
-        />
+        <div className="keyboard-container">
+          <button className="btn-link keyboard-clear" onClick={handleClearKeymap}>
+            Clear Configuration
+          </button>
+          <Keyboard
+            keyData={keyData}
+            showKeyNumbers={showKeyNumbers}
+            overrides={overrides}
+            onKeyClick={handleKeyClick}
+          />
+        </div>
       </main>
 
       <div className="legend">
-        <div className="legend-item"><div className="legend-color key"></div> Key</div>
-        <div className="legend-item"><div className="legend-color modifier"></div> Modifier</div>
-        <div className="legend-item"><div className="legend-color layer"></div> Layer</div>
-        <div className="legend-item"><div className="legend-color special"></div> Special</div>
+        <div className="legend-item">
+          <div className="legend-color key"></div> Key
+        </div>
+        <div className="legend-item">
+          <div className="legend-color modifier"></div> Modifier
+        </div>
+        <div className="legend-item">
+          <div className="legend-color layer"></div> Layer
+        </div>
+        <div className="legend-item">
+          <div className="legend-color special"></div> Special
+        </div>
       </div>
 
       <OverridesList

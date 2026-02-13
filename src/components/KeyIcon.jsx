@@ -18,7 +18,7 @@ const iconMap = {
   'refresh-cw': icons.RefreshCw,
 }
 
-export function KeyIcon({ name, x, y, size = 16 }) {
+export function KeyIcon({ name, x, y, size = 16, color = '#fff' }) {
   const IconComponent = iconMap[name]
 
   if (!IconComponent) {
@@ -42,7 +42,7 @@ export function KeyIcon({ name, x, y, size = 16 }) {
           height: '100%',
         }}
       >
-        <IconComponent size={size} color="#fff" strokeWidth={2} />
+        <IconComponent size={size} color={color} strokeWidth={2} />
       </div>
     </foreignObject>
   )

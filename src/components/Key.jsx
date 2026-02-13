@@ -101,6 +101,7 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
               x={px + width / 2}
               y={py + height - holdBannerHeight / 2}
               size={14}
+              color="#2a2a4a"
             />
           ) : (
             <>

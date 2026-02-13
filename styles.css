@@ -1,0 +1,252 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.controls label {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.controls select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a4a;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.controls select:hover {
+  border-color: #666;
+}
+
+/* Keyboard SVG Container */
+.keyboard-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+  background: #252545;
+  border-radius: 12px;
+}
+
+.keyboard-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* SVG Key Styling */
+.key-shape {
+  fill: #2a2a4a;
+  stroke: #5a5a7a;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.key-shape:hover {
+  fill: #3a3a6a;
+  stroke: #7a7aaa;
+}
+
+.key-group:hover .key-shape {
+  fill: #3a3a6a;
+  stroke: #7a7aaa;
+}
+
+/* Key types */
+.key-group.modifier .key-shape {
+  fill: #3a2a4a;
+  stroke: #6a4a7a;
+}
+
+.key-group.layer .key-shape {
+  fill: #2a4a3a;
+  stroke: #4a7a5a;
+}
+
+.key-group.special .key-shape {
+  fill: #4a3a2a;
+  stroke: #7a5a4a;
+}
+
+.key-group.none .key-shape {
+  fill: #1a1a2a;
+  stroke: #3a3a4a;
+}
+
+.key-group.trans .key-shape {
+  fill: transparent;
+  stroke: #4a4a6a;
+  stroke-dasharray: 4 2;
+}
+
+/* Key labels */
+.key-label {
+  fill: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.key-label.small {
+  font-size: 9px;
+}
+
+.key-sublabel {
+  fill: #888;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 7px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* Hold indicator */
+.hold-indicator {
+  fill: #666;
+  font-size: 8px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.hold-badge {
+  fill: #3a3a5a;
+  stroke: #5a5a7a;
+  stroke-width: 1;
+}
+
+/* Section labels */
+.section-label {
+  fill: #666;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Loading and error states */
+.loading, .error {
+  text-align: center;
+  padding: 40px;
+  background: #252545;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.loading .hint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.loading code {
+  background: #1a1a2e;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.error {
+  background: #452525;
+  color: #ff8888;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Tooltip */
+.tooltip {
+  position: fixed;
+  background: #1a1a2e;
+  border: 1px solid #5a5a7a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 250px;
+}
+
+.tooltip .tt-action {
+  color: #fff;
+  font-weight: 500;
+}
+
+.tooltip .tt-type {
+  color: #888;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.tooltip .tt-hold {
+  color: #7a7aaa;
+  font-size: 10px;
+  margin-top: 4px;
+  border-top: 1px solid #3a3a5a;
+  padding-top: 4px;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.legend-color.key { background: #2a2a4a; border-color: #5a5a7a; }
+.legend-color.modifier { background: #3a2a4a; border-color: #6a4a7a; }
+.legend-color.layer { background: #2a4a3a; border-color: #4a7a5a; }
+.legend-color.special { background: #4a3a2a; border-color: #7a5a4a; }

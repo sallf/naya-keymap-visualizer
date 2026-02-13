@@ -1,0 +1,15 @@
+# Claude
+.claude
+
+# Database (user-specific)
+*.db
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+
+# IDE
+.idea/
+.vscode/

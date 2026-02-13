@@ -4,7 +4,15 @@ import { Keyboard } from './components/Keyboard'
 import { FileDropZone } from './components/FileDropZone'
 
 function App() {
-  const [isBeta, setIsBeta] = useState(false)
+  const [isBeta, setIsBeta] = useState(() => {
+    const stored = localStorage.getItem('naya-keymap-beta')
+    return stored === 'true'
+  })
+
+  const handleBetaToggle = (value) => {
+    setIsBeta(value)
+    localStorage.setItem('naya-keymap-beta', value.toString())
+  }
   const { db, loading, error, needsFile, loadFromFile } = useDatabase(isBeta)
   const profiles = useProfiles(db)
   const [selectedProfile, setSelectedProfile] = useState(null)
@@ -56,7 +64,7 @@ function App() {
         <FileDropZone
           onFileSelect={loadFromFile}
           isBeta={isBeta}
-          onBetaToggle={setIsBeta}
+          onBetaToggle={handleBetaToggle}
         />
       </div>
     )

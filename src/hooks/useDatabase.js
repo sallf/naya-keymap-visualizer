@@ -1,5 +1,27 @@
 import { useState, useEffect, useCallback } from 'react'
 
+const STORAGE_KEY = 'naya-keymap-db'
+
+// Convert ArrayBuffer to base64 for storage
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer)
+  let binary = ''
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary)
+}
+
+// Convert base64 back to ArrayBuffer
+function base64ToArrayBuffer(base64) {
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+  return bytes.buffer
+}
+
 export function useDatabase(isBeta = false) {
   const [db, setDb] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -8,7 +30,7 @@ export function useDatabase(isBeta = false) {
 
   const dbFileName = isBeta ? 'user-data-beta.db' : 'user-data.db'
 
-  const loadDatabase = useCallback(async (arrayBuffer) => {
+  const loadDatabase = useCallback(async (arrayBuffer, saveToStorage = true) => {
     try {
       const SQL = await window.initSqlJs({
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
@@ -18,6 +40,16 @@ export function useDatabase(isBeta = false) {
       setLoading(false)
       setNeedsFile(false)
       setError(null)
+
+      // Save to localStorage
+      if (saveToStorage) {
+        try {
+          const base64 = arrayBufferToBase64(arrayBuffer)
+          localStorage.setItem(STORAGE_KEY, base64)
+        } catch (e) {
+          console.warn('Could not save to localStorage:', e.message)
+        }
+      }
     } catch (e) {
       setError('Failed to load database: ' + e.message)
       setLoading(false)
@@ -46,8 +78,24 @@ export function useDatabase(isBeta = false) {
 
   useEffect(() => {
     async function init() {
+      // First, try to load from localStorage
       try {
-        // Try to load from public folder first
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+          const buffer = base64ToArrayBuffer(stored)
+          const header = new Uint8Array(buffer.slice(0, 16))
+          const headerStr = String.fromCharCode(...header)
+          if (headerStr.startsWith('SQLite format 3')) {
+            await loadDatabase(buffer, false) // Don't re-save to storage
+            return
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load from localStorage:', e.message)
+      }
+
+      // Then try to load from public folder
+      try {
         const response = await fetch(`/${dbFileName}`)
 
         // Check if we got a valid response with the right content type
@@ -62,14 +110,13 @@ export function useDatabase(isBeta = false) {
             return
           }
         }
-
-        // No valid file in public folder, prompt user to select one
-        setLoading(false)
-        setNeedsFile(true)
       } catch (e) {
-        setLoading(false)
-        setNeedsFile(true)
+        // Ignore fetch errors
       }
+
+      // No valid file found, prompt user to select one
+      setLoading(false)
+      setNeedsFile(true)
     }
 
     init()

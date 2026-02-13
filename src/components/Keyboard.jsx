@@ -3,7 +3,7 @@ import { LAYOUT, U, GAP } from '../constants'
 import { Key } from './Key'
 import { Tooltip } from './Tooltip'
 
-export function Keyboard({ keyData }) {
+export function Keyboard({ keyData, showKeyNumbers }) {
   const [tooltip, setTooltip] = useState(null)
 
   const leftWidth = 8 * (U + GAP)
@@ -45,6 +45,7 @@ export function Keyboard({ keyData }) {
               key={keyDef.pos}
               keyDef={keyDef}
               data={keyData.get(keyDef.pos)}
+              showKeyNumber={showKeyNumbers}
               onHover={(pos, data) => handleHover(pos, data, event)}
               onLeave={handleLeave}
             />
@@ -57,6 +58,7 @@ export function Keyboard({ keyData }) {
               key={keyDef.pos}
               keyDef={keyDef}
               data={keyData.get(keyDef.pos)}
+              showKeyNumber={showKeyNumbers}
               onHover={(pos, data) => handleHover(pos, data, event)}
               onLeave={handleLeave}
             />

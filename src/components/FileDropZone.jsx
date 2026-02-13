@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { Toggle } from './Toggle'
 
 export function FileDropZone({ onFileSelect, isBeta, onBetaToggle }) {
   const [isDragging, setIsDragging] = useState(false)
@@ -87,15 +88,11 @@ export function FileDropZone({ onFileSelect, isBeta, onBetaToggle }) {
           </p>
 
           <div className="beta-toggle">
-            <span className="beta-label">Beta version?</span>
-            <label className="toggle-switch">
-              <input
-                type="checkbox"
-                checked={isBeta}
-                onChange={(e) => onBetaToggle(e.target.checked)}
-              />
-              <span className="toggle-slider"></span>
-            </label>
+            <Toggle
+              checked={isBeta}
+              onChange={onBetaToggle}
+              label="Beta version?"
+            />
           </div>
         </div>
       </div>

@@ -56,6 +56,18 @@ h1 {
   border-color: #666;
 }
 
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.toggle-text {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
 /* Keyboard SVG Container */
 .keyboard-wrapper {
   display: flex;
@@ -319,12 +331,10 @@ h1 {
 .beta-toggle {
   margin-top: 16px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
 }
 
-.beta-label {
+.beta-toggle .toggle-text {
   color: #555;
   font-size: 0.75rem;
 }

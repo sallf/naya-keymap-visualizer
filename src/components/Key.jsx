@@ -1,7 +1,7 @@
 import { U, GAP, RADIUS } from '../constants'
 import { getTypeClass, getKeyLabel } from '../utils'
 
-export function Key({ keyDef, data, onHover, onLeave }) {
+export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
   const { x, y, w, h, pos } = keyDef
 
   const px = x * (U + GAP)
@@ -56,13 +56,15 @@ export function Key({ keyDef, data, onHover, onLeave }) {
           </text>
         </>
       )}
-      <text
-        className="key-sublabel"
-        x={px + width / 2}
-        y={py + height - 4}
-      >
-        {pos}
-      </text>
+      {showKeyNumber && (
+        <text
+          className="key-sublabel"
+          x={px + width / 2}
+          y={py + height - 4}
+        >
+          {pos}
+        </text>
+      )}
     </g>
   )
 }

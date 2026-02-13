@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDatabase, useProfiles, useLayers, useKeyData } from './hooks/useDatabase'
 import { Keyboard } from './components/Keyboard'
 import { FileDropZone } from './components/FileDropZone'
+import { Toggle } from './components/Toggle'
 
 function App() {
   const [isBeta, setIsBeta] = useState(() => {
@@ -17,6 +18,7 @@ function App() {
   const profiles = useProfiles(db)
   const [selectedProfile, setSelectedProfile] = useState(null)
   const [selectedLayer, setSelectedLayer] = useState(null)
+  const [showKeyNumbers, setShowKeyNumbers] = useState(false)
 
   const layers = useLayers(db, selectedProfile)
   const keyData = useKeyData(db, selectedLayer, selectedProfile)
@@ -100,11 +102,17 @@ function App() {
               </option>
             ))}
           </select>
+
+          <Toggle
+            checked={showKeyNumbers}
+            onChange={setShowKeyNumbers}
+            label="Key #s"
+          />
         </div>
       </header>
 
       <main>
-        <Keyboard keyData={keyData} />
+        <Keyboard keyData={keyData} showKeyNumbers={showKeyNumbers} />
       </main>
 
       <div className="legend">

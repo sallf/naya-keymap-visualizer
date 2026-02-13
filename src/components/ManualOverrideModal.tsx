@@ -293,9 +293,6 @@ function OverrideSection({
               onChange={e => {
                 setExternalLibrary(e.target.value as ExternalLibrary)
                 setPreviewStatus('idle')
-                setSearchResults([])
-                setSearchQuery('')
-                setExternalIconName('')
               }}
             >
               {EXTERNAL_LIBRARIES.map(lib => (

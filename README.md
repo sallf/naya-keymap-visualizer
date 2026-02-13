@@ -1,6 +1,8 @@
 # Naya Keymap Viewer
 
-A better way to view and understand your Naya Create keyboard layout. See your entire keymap at a glance and customize how keys are displayed to make your layout easier to read and remember.
+A better way to view and understand your Naya Create keyboard layout.
+
+![Naya Keymap Viewer Screenshot](docs/screenshot.png) See your entire keymap at a glance and customize how keys are displayed to make your layout easier to read and remember.
 
 ## Why Use This?
 

@@ -95,11 +95,40 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
     }
 
     // Parse modifiers
+    const hasGui = actionCode.includes('LGUI') || actionCode.includes('RGUI')
+    const hasCtrl = actionCode.includes('LCTRL') || actionCode.includes('RCTRL')
+    const hasAlt = actionCode.includes('LALT') || actionCode.includes('RALT')
+    const hasShift = actionCode.includes('LSHIFT') || actionCode.includes('RSHIFT')
+
+    // Check for Hyper (all four modifiers)
+    if (hasGui && hasCtrl && hasAlt && hasShift) {
+      // Get the key part (last segment after " + ")
+      const parts = actionCode.split(' + ')
+      const keyPart = parts[parts.length - 1]
+      // If it's just the modifiers with no key, return Hyper
+      if (['LSHIFT', 'RSHIFT', 'LGUI', 'RGUI', 'LCTRL', 'RCTRL', 'LALT', 'RALT'].includes(keyPart)) {
+        return '✦ Hyper'
+      }
+      const keyLabel = KEY_LABELS[keyPart] || keyPart
+      return { modifiers: '✦', label: keyLabel }
+    }
+
+    // Check for Meh (Ctrl+Alt+Shift, no Gui)
+    if (!hasGui && hasCtrl && hasAlt && hasShift) {
+      const parts = actionCode.split(' + ')
+      const keyPart = parts[parts.length - 1]
+      if (['LSHIFT', 'RSHIFT', 'LCTRL', 'RCTRL', 'LALT', 'RALT'].includes(keyPart)) {
+        return '◆ Meh'
+      }
+      const keyLabel = KEY_LABELS[keyPart] || keyPart
+      return { modifiers: '◆', label: keyLabel }
+    }
+
     const modifiers = []
-    if (actionCode.includes('LGUI') || actionCode.includes('RGUI')) modifiers.push('⌘')
-    if (actionCode.includes('LCTRL') || actionCode.includes('RCTRL')) modifiers.push('⌃')
-    if (actionCode.includes('LALT') || actionCode.includes('RALT')) modifiers.push('⌥')
-    if (actionCode.includes('LSHIFT') || actionCode.includes('RSHIFT')) modifiers.push('⇧')
+    if (hasGui) modifiers.push('⌘')
+    if (hasCtrl) modifiers.push('⌃')
+    if (hasAlt) modifiers.push('⌥')
+    if (hasShift) modifiers.push('⇧')
 
     // Get the key part (last segment after " + ")
     const parts = actionCode.split(' + ')

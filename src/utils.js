@@ -24,6 +24,75 @@ const SHORTCUT_ICONS = {
   'LCTRL + LSHIFT + Z': 'redo-2',
   'LGUI + SHIFT + Z': 'redo-2',
   'LCTRL + SHIFT + Z': 'redo-2',
+
+  // Mac system shortcuts
+  'LCTRL + UP': 'layout-grid',           // Mission Control
+  'LGUI + SPACE': 'search',              // Spotlight
+  'LCTRL + LSHIFT + C_POWER': 'moon',    // Display Sleep
+  'LCTRL + DOWN': 'app-window',          // App Exposé
+  'LCTRL + LEFT': 'chevron-left',        // Move space left
+  'LCTRL + RIGHT': 'chevron-right',      // Move space right
+}
+
+// System/media key icons
+const SYSTEM_KEY_ICONS = {
+  // Media
+  'C_VOL_UP': 'volume-2',
+  'C_VOL_DOWN': 'volume-1',
+  'C_MUTE': 'volume-x',
+  'C_PLAY_PAUSE': 'play',
+  'C_NEXT': 'skip-forward',
+  'C_PREVIOUS': 'skip-back',
+  'C_FAST_FORWARD': 'fast-forward',
+  'C_REWIND': 'rewind',
+  'C_BRIGHTNESS_INC': 'sun',
+  'C_BRIGHTNESS_DEC': 'sun-dim',
+
+  // LED
+  'LED_EFFECT_ON_OFF': 'lightbulb',
+  'LED_EFFECT': 'sparkles',
+  'LED_BREATHE': 'waves',
+  'LED_SOLID': 'square',
+  'LED_SWIRL': 'loader',
+  'LED_SPEC': 'rainbow',
+  'LED_BRIGHTNESS_UP': 'sun',
+  'LED_BRIGHTNESS_DOWN': 'sun-dim',
+  'LED_SPEED_UP': 'gauge',
+  'LED_SPEED_DOWN': 'gauge',
+
+  // Bluetooth
+  'BT_CLEAR': 'bluetooth-off',
+  'BT_OUT': 'wifi',
+  'BT_DEVICE_1': 'bluetooth',
+  'BT_DEVICE_2': 'bluetooth',
+  'BT_DEVICE_3': 'bluetooth',
+  'BT_DEVICE_4': 'bluetooth',
+
+  // Output
+  'USB_DEVICE': 'cable',
+
+  // OS
+  'MAC_OS': 'apple',
+  'WINDOWS_OS': 'app-window',
+
+  // Naya
+  'SCROLL_DIRECTION_L': 'arrow-up-down',
+  'SCROLL_DIRECTION_R': 'arrow-up-down',
+  'TUNE_MODE_L': 'sliders-horizontal',
+  'TUNE_MODE_R': 'sliders-horizontal',
+}
+
+// Labels for system keys (shown as text overlay or standalone)
+const SYSTEM_KEY_LABELS = {
+  'LED_COLOR_RED': '🔴',
+  'LED_COLOR_GREEN': '🟢',
+  'LED_COLOR_BLUE': '🔵',
+  'LED_COLOR_YELLOW': '🟡',
+  'LED_COLOR_WHITE': '⚪',
+  'BT_DEVICE_1': '1',
+  'BT_DEVICE_2': '2',
+  'BT_DEVICE_3': '3',
+  'BT_DEVICE_4': '4',
 }
 
 // Map action types to their display names
@@ -64,7 +133,7 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
 
   // Handle transparent keys
   if (actionType === 'trans') {
-    return '👁‍🗨'
+    return { icon: 'eye-off' }
   }
 
   // Handle layer actions
@@ -156,6 +225,20 @@ export function getKeyLabel(actionCode, actionType, layerMap) {
     }
 
     return keyLabel.substring(0, 6)
+  }
+
+  // Check for system key icons
+  if (SYSTEM_KEY_ICONS[actionCode]) {
+    const label = SYSTEM_KEY_LABELS[actionCode]
+    if (label) {
+      return { icon: SYSTEM_KEY_ICONS[actionCode], label }
+    }
+    return { icon: SYSTEM_KEY_ICONS[actionCode] }
+  }
+
+  // Check for LED color keys (no icon, just colored text)
+  if (SYSTEM_KEY_LABELS[actionCode]) {
+    return SYSTEM_KEY_LABELS[actionCode]
   }
 
   if (KEY_LABELS[actionCode]) {

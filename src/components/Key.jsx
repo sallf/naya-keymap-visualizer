@@ -23,7 +23,8 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
 
   const isIcon = typeof label === 'object' && label?.icon
   const hasModifiers = typeof label === 'object' && label?.modifiers
-  const labelText = isIcon ? '' : (hasModifiers ? label.label : label)
+  const iconWithLabel = isIcon && label?.label  // Icon with a small label (like BT 1)
+  const labelText = isIcon ? (iconWithLabel ? label.label : '') : (hasModifiers ? label.label : label)
   const modifiers = hasModifiers ? label.modifiers : null
   const labelClass = typeof labelText === 'string' && labelText.length > 4 ? 'small' : ''
 
@@ -67,12 +68,23 @@ export function Key({ keyDef, data, showKeyNumber, onHover, onLeave }) {
         </>
       )}
       {isIcon ? (
-        <KeyIcon
-          name={label.icon}
-          x={px + width / 2}
-          y={labelY}
-          size={16}
-        />
+        <>
+          <KeyIcon
+            name={label.icon}
+            x={px + width / 2}
+            y={iconWithLabel ? labelY - 5 : labelY}
+            size={16}
+          />
+          {iconWithLabel && (
+            <text
+              className="key-label small"
+              x={px + width / 2}
+              y={labelY + 10}
+            >
+              {label.label}
+            </text>
+          )}
+        </>
       ) : (
         <text
           className={`key-label ${labelClass}`}

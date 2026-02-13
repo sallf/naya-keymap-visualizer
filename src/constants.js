@@ -46,6 +46,7 @@ export const KEY_LABELS = {
   'VOL_UP': '🔊', 'VOL_DOWN': '🔉', 'MUTE': '🔇',
   'PLAY_PAUSE': '⏯', 'NEXT_TRACK': '⏭', 'PREV_TRACK': '⏮',
   'M1': 'L Click', 'M2': 'R Click',
+
 }
 
 // SVG Layout Configuration

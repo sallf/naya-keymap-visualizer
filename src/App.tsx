@@ -148,31 +148,35 @@ function App() {
       <header>
         <h1>Naya Keymap Viewer</h1>
         <div className="controls">
-          <label htmlFor="profile-select">Profile:</label>
-          <select
-            id="profile-select"
-            value={selectedProfile || ''}
-            onChange={handleProfileChange}
-          >
-            {profiles.map((profile) => (
-              <option key={profile.id} value={profile.id}>
-                {profile.name}
-              </option>
-            ))}
-          </select>
+          <div className="control-group">
+            <label htmlFor="profile-select">Profile:</label>
+            <select
+              id="profile-select"
+              value={selectedProfile || ''}
+              onChange={handleProfileChange}
+            >
+              {profiles.map((profile) => (
+                <option key={profile.id} value={profile.id}>
+                  {profile.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <label htmlFor="layer-select">Layer:</label>
-          <select
-            id="layer-select"
-            value={selectedLayer || ''}
-            onChange={handleLayerChange}
-          >
-            {layers.map((layer) => (
-              <option key={layer.id} value={layer.id}>
-                {layer.order}: {layer.name}
-              </option>
-            ))}
-          </select>
+          <div className="control-group">
+            <label htmlFor="layer-select">Layer:</label>
+            <select
+              id="layer-select"
+              value={selectedLayer || ''}
+              onChange={handleLayerChange}
+            >
+              {layers.map((layer) => (
+                <option key={layer.id} value={layer.id}>
+                  {layer.order}: {layer.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <Toggle
             checked={showKeyNumbers}

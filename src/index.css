@@ -65,6 +65,12 @@ h1 {
   align-items: center;
 }
 
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .controls label {
   font-size: 0.9rem;
   color: #aaa;
@@ -1004,4 +1010,133 @@ h1 {
   vertical-align: middle;
   /* Invert black SVG icons to white for dark background */
   filter: brightness(0) invert(1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .control-group label {
+    min-width: 50px;
+  }
+
+  .control-group select {
+    flex: 1;
+  }
+
+  .keyboard-wrapper {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .keyboard-clear {
+    font-size: 0.7rem;
+  }
+
+  .legend {
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .legend-key-diagram svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .overrides-list {
+    padding: 12px;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+    border-radius: 10px;
+  }
+
+  .modal-header {
+    padding: 12px 16px;
+  }
+
+  .modal-body {
+    padding: 12px 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+
+  .search-results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  }
+
+  .file-drop-zone {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 8px;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+  }
+
+  .keyboard-wrapper {
+    padding: 8px;
+  }
+
+  .legend {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .legend-colors {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .search-results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    max-height: 200px;
+  }
 }

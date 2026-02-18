@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent, useCallback } from 'react'
-import { X } from 'lucide-react'
+import { X, Github } from 'lucide-react'
 import {
   useDatabase,
   useProfiles,
@@ -139,6 +139,12 @@ function App() {
           isBeta={isBeta}
           onBetaToggle={handleBetaToggle}
         />
+        <footer className="app-footer">
+          <a href="https://github.com/sallf/naya-keymap-visualizer" target="_blank" rel="noopener noreferrer">
+            <Github size={16} />
+            github.com/sallf/naya-keymap-visualizer
+          </a>
+        </footer>
       </div>
     )
   }
@@ -252,6 +258,13 @@ function App() {
         onClose={handleModalClose}
         onClear={clearOverride}
       />
+
+      <footer className="app-footer">
+        <a href="https://github.com/sallf/naya-keymap-visualizer" target="_blank" rel="noopener noreferrer">
+          <Github size={16} />
+          github.com/sallf/naya-keymap-visualizer
+        </a>
+      </footer>
     </div>
   )
 }

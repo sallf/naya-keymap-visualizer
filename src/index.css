@@ -32,6 +32,26 @@ h1 {
   color: #fff;
 }
 
+.app-footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  text-align: center;
+}
+
+.app-footer a {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s ease;
+}
+
+.app-footer a:hover {
+  color: #888;
+}
+
 .keyboard-container {
   position: relative;
 }

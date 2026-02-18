@@ -1,4 +1,5 @@
 import { useState, useEffect, ChangeEvent, useCallback } from 'react'
+import { X } from 'lucide-react'
 import {
   useDatabase,
   useProfiles,
@@ -187,6 +188,7 @@ function App() {
             className="btn-link keyboard-clear"
             onClick={handleClearKeymap}
           >
+            <X size={14} />
             Clear Configuration File
           </button>
           <Keyboard

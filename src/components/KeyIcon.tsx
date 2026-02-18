@@ -13,7 +13,8 @@ export function getExternalIconUrl(library: string, iconName: string): string {
     case 'feather':
       return `https://cdn.jsdelivr.net/npm/feather-icons/dist/icons/${iconName}.svg`
     default:
-      return ''
+      // For any Iconify-supported prefix, use the Iconify API directly
+      return `https://api.iconify.design/${library}/${iconName}.svg`
   }
 }
 

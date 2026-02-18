@@ -1,158 +1,21 @@
 import { useState, useEffect, MouseEvent } from 'react'
 import * as icons from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
 import type { Override, OverrideValue } from '../types'
-import { getExternalIconUrl } from './KeyIcon'
-
-type ExternalLibrary = 'lucide' | 'heroicons' | 'tabler' | 'feather'
-
-const EXTERNAL_LIBRARIES: { value: ExternalLibrary; label: string; browseUrl: string; placeholder: string }[] = [
-  { value: 'lucide', label: 'Lucide (1500+ icons)', browseUrl: 'https://lucide.dev/icons/', placeholder: 'e.g. home, copy, arrow-right' },
-  { value: 'heroicons', label: 'Heroicons (450+ icons)', browseUrl: 'https://heroicons.com/', placeholder: 'e.g. home, clipboard, arrow-right' },
-  { value: 'tabler', label: 'Tabler (5900+ icons)', browseUrl: 'https://tabler.io/icons/', placeholder: 'e.g. home, copy, arrow-right' },
-  { value: 'feather', label: 'Feather (286 icons)', browseUrl: 'https://feathericons.com/', placeholder: 'e.g. home, copy, arrow-right' },
-]
-
-// Available icons for selection
-const AVAILABLE_ICONS: { name: string; label: string }[] = [
-  { name: 'copy', label: 'Copy' },
-  { name: 'clipboard-paste', label: 'Paste' },
-  { name: 'scissors', label: 'Cut' },
-  { name: 'save', label: 'Save' },
-  { name: 'search', label: 'Search' },
-  { name: 'undo-2', label: 'Undo' },
-  { name: 'redo-2', label: 'Redo' },
-  { name: 'x', label: 'Close' },
-  { name: 'power', label: 'Power' },
-  { name: 'refresh-cw', label: 'Refresh' },
-  { name: 'plus', label: 'Plus' },
-  { name: 'minus', label: 'Minus' },
-  { name: 'volume-2', label: 'Volume Up' },
-  { name: 'volume-1', label: 'Volume Down' },
-  { name: 'volume-x', label: 'Mute' },
-  { name: 'play', label: 'Play' },
-  { name: 'pause', label: 'Pause' },
-  { name: 'skip-forward', label: 'Next' },
-  { name: 'skip-back', label: 'Previous' },
-  { name: 'sun', label: 'Brightness' },
-  { name: 'moon', label: 'Sleep' },
-  { name: 'lightbulb', label: 'Light' },
-  { name: 'bluetooth', label: 'Bluetooth' },
-  { name: 'wifi', label: 'Wifi' },
-  { name: 'cable', label: 'USB' },
-  { name: 'layout-grid', label: 'Grid' },
-  { name: 'eye-off', label: 'Hidden' },
-  { name: 'home', label: 'Home' },
-  { name: 'settings', label: 'Settings' },
-  { name: 'terminal', label: 'Terminal' },
-  { name: 'folder', label: 'Folder' },
-  { name: 'file', label: 'File' },
-  { name: 'trash-2', label: 'Delete' },
-  { name: 'lock', label: 'Lock' },
-  { name: 'unlock', label: 'Unlock' },
-  { name: 'globe', label: 'Globe' },
-  { name: 'mail', label: 'Mail' },
-  { name: 'message-square', label: 'Message' },
-  { name: 'camera', label: 'Camera' },
-  { name: 'image', label: 'Image' },
-  { name: 'music', label: 'Music' },
-  { name: 'video', label: 'Video' },
-  { name: 'mic', label: 'Mic' },
-  { name: 'headphones', label: 'Headphones' },
-  { name: 'arrow-up', label: 'Arrow Up' },
-  { name: 'arrow-down', label: 'Arrow Down' },
-  { name: 'arrow-left', label: 'Arrow Left' },
-  { name: 'arrow-right', label: 'Arrow Right' },
-  { name: 'chevron-up', label: 'Chevron Up' },
-  { name: 'chevron-down', label: 'Chevron Down' },
-  { name: 'chevron-left', label: 'Chevron Left' },
-  { name: 'chevron-right', label: 'Chevron Right' },
-]
-
-// Icon name to component mapping
-const iconComponents: Record<string, LucideIcon> = {
-  'copy': icons.Copy,
-  'clipboard-paste': icons.ClipboardPaste,
-  'scissors': icons.Scissors,
-  'save': icons.Save,
-  'search': icons.Search,
-  'undo-2': icons.Undo2,
-  'redo-2': icons.Redo2,
-  'x': icons.X,
-  'power': icons.Power,
-  'refresh-cw': icons.RefreshCw,
-  'plus': icons.Plus,
-  'minus': icons.Minus,
-  'volume-2': icons.Volume2,
-  'volume-1': icons.Volume1,
-  'volume-x': icons.VolumeX,
-  'play': icons.Play,
-  'pause': icons.Pause,
-  'skip-forward': icons.SkipForward,
-  'skip-back': icons.SkipBack,
-  'sun': icons.Sun,
-  'moon': icons.Moon,
-  'lightbulb': icons.Lightbulb,
-  'bluetooth': icons.Bluetooth,
-  'wifi': icons.Wifi,
-  'cable': icons.Cable,
-  'layout-grid': icons.LayoutGrid,
-  'eye-off': icons.EyeOff,
-  'home': icons.Home,
-  'settings': icons.Settings,
-  'terminal': icons.Terminal,
-  'folder': icons.Folder,
-  'file': icons.File,
-  'trash-2': icons.Trash2,
-  'lock': icons.Lock,
-  'unlock': icons.Unlock,
-  'globe': icons.Globe,
-  'mail': icons.Mail,
-  'message-square': icons.MessageSquare,
-  'camera': icons.Camera,
-  'image': icons.Image,
-  'music': icons.Music,
-  'video': icons.Video,
-  'mic': icons.Mic,
-  'headphones': icons.Headphones,
-  'arrow-up': icons.ArrowUp,
-  'arrow-down': icons.ArrowDown,
-  'arrow-left': icons.ArrowLeft,
-  'arrow-right': icons.ArrowRight,
-  'chevron-up': icons.ChevronUp,
-  'chevron-down': icons.ChevronDown,
-  'chevron-left': icons.ChevronLeft,
-  'chevron-right': icons.ChevronRight,
-}
-
-type Mode = 'text' | 'icon' | 'external'
-
-interface OverrideSectionProps {
-  title: string
-  currentLabel: string
-  mode: Mode
-  setMode: (mode: Mode) => void
-  textValue: string
-  setTextValue: (value: string) => void
-  selectedIcon: string | null
-  setSelectedIcon: (icon: string | null) => void
-  externalLibrary: ExternalLibrary
-  setExternalLibrary: (library: ExternalLibrary) => void
-  externalIconName: string
-  setExternalIconName: (name: string) => void
-}
-
-// Map our library names to Iconify prefixes
-const ICONIFY_PREFIXES: Record<ExternalLibrary, string> = {
-  lucide: 'lucide',
-  heroicons: 'heroicons-outline',
-  tabler: 'tabler',
-  feather: 'feather',
-}
 
 interface SearchResult {
   name: string
   prefix: string
+}
+
+interface OverrideSectionProps {
+  title: string
+  currentLabel: string
+  mode: 'text' | 'icon'
+  setMode: (mode: 'text' | 'icon') => void
+  textValue: string
+  setTextValue: (value: string) => void
+  selectedIcon: { prefix: string; name: string } | null
+  setSelectedIcon: (icon: { prefix: string; name: string } | null) => void
 }
 
 function OverrideSection({
@@ -164,21 +27,10 @@ function OverrideSection({
   setTextValue,
   selectedIcon,
   setSelectedIcon,
-  externalLibrary,
-  setExternalLibrary,
-  externalIconName,
-  setExternalIconName
 }: OverrideSectionProps) {
-  const [previewStatus, setPreviewStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-
-  const previewUrl = externalIconName.trim()
-    ? getExternalIconUrl(externalLibrary, externalIconName.trim())
-    : null
-
-  const selectedLibraryInfo = EXTERNAL_LIBRARIES.find(lib => lib.value === externalLibrary)
 
   // Debounced search using Iconify API
   useEffect(() => {
@@ -190,9 +42,8 @@ function OverrideSection({
     const timeoutId = setTimeout(async () => {
       setIsSearching(true)
       try {
-        const prefix = ICONIFY_PREFIXES[externalLibrary]
         const response = await fetch(
-          `https://api.iconify.design/search?query=${encodeURIComponent(searchQuery)}&prefix=${prefix}&limit=20`
+          `https://api.iconify.design/search?query=${encodeURIComponent(searchQuery)}&limit=30`
         )
         const data = await response.json()
         if (data.icons && Array.isArray(data.icons)) {
@@ -210,19 +61,11 @@ function OverrideSection({
     }, 300)
 
     return () => clearTimeout(timeoutId)
-  }, [searchQuery, externalLibrary])
+  }, [searchQuery])
 
-  const handleSearchInput = (value: string) => {
-    setSearchQuery(value.toLowerCase())
-    setExternalIconName(value.toLowerCase())
-    setPreviewStatus('idle')
-  }
-
-  const handleSelectSearchResult = (name: string) => {
-    setExternalIconName(name)
-    setSearchQuery(name)
+  const handleSelectSearchResult = (result: SearchResult) => {
+    setSelectedIcon(result)
     setSearchResults([])
-    setPreviewStatus('idle')
   }
 
   return (
@@ -245,12 +88,6 @@ function OverrideSection({
         >
           Icon
         </button>
-        <button
-          className={`mode-tab ${mode === 'external' ? 'active' : ''}`}
-          onClick={() => setMode('external')}
-        >
-          External
-        </button>
       </div>
 
       {mode === 'text' && (
@@ -267,52 +104,17 @@ function OverrideSection({
       )}
 
       {mode === 'icon' && (
-        <div className="icon-grid">
-          {AVAILABLE_ICONS.map(({ name, label }) => {
-            const IconComponent = iconComponents[name]
-            return (
-              <button
-                key={name}
-                className={`icon-option ${selectedIcon === name ? 'selected' : ''}`}
-                onClick={() => setSelectedIcon(name)}
-                title={label}
-              >
-                <IconComponent size={20} />
-              </button>
-            )
-          })}
-        </div>
-      )}
-
-      {mode === 'external' && (
         <div className="external-icon-section">
-          <div className="external-library-select">
-            <label>Library:</label>
-            <select
-              value={externalLibrary}
-              onChange={e => {
-                setExternalLibrary(e.target.value as ExternalLibrary)
-                setPreviewStatus('idle')
-              }}
-            >
-              {EXTERNAL_LIBRARIES.map(lib => (
-                <option key={lib.value} value={lib.value}>{lib.label}</option>
-              ))}
-            </select>
-          </div>
-
           <div className="external-icon-input">
-            <label>Search icons:</label>
             <input
               type="text"
               value={searchQuery}
-              onChange={e => handleSearchInput(e.target.value)}
-              placeholder={selectedLibraryInfo?.placeholder || 'e.g. home, copy, arrow-right'}
+              onChange={e => setSearchQuery(e.target.value.toLowerCase())}
+              placeholder="Search 200,000+ icons..."
             />
           </div>
 
           <div className="external-preview-area">
-            {/* Show search results or preview */}
             {isSearching ? (
               <div className="external-preview idle">
                 <span className="preview-placeholder">Searching...</span>
@@ -322,33 +124,32 @@ function OverrideSection({
                 <div className="search-results-grid">
                   {searchResults.map(result => (
                     <button
-                      key={result.name}
-                      className={`search-result-item ${externalIconName === result.name ? 'selected' : ''}`}
-                      onClick={() => handleSelectSearchResult(result.name)}
-                      title={result.name}
+                      key={`${result.prefix}:${result.name}`}
+                      className={`search-result-item ${selectedIcon?.prefix === result.prefix && selectedIcon?.name === result.name ? 'selected' : ''}`}
+                      onClick={() => handleSelectSearchResult(result)}
+                      title={`${result.prefix}:${result.name}`}
                     >
                       <img
-                        src={getExternalIconUrl(externalLibrary, result.name)}
+                        src={`https://api.iconify.design/${result.prefix}/${result.name}.svg`}
                         alt={result.name}
                         width={20}
                         height={20}
                       />
                       <span className="result-name">{result.name}</span>
+                      <span className="result-prefix">{result.prefix}</span>
                     </button>
                   ))}
                 </div>
               </div>
-            ) : previewUrl ? (
-              <div className={`external-preview ${previewStatus}`}>
+            ) : selectedIcon ? (
+              <div className="external-preview success">
                 <img
-                  src={previewUrl}
-                  alt={externalIconName}
-                  onLoad={() => setPreviewStatus('success')}
-                  onError={() => setPreviewStatus('error')}
+                  src={`https://api.iconify.design/${selectedIcon.prefix}/${selectedIcon.name}.svg`}
+                  alt={selectedIcon.name}
+                  width={24}
+                  height={24}
                 />
-                {previewStatus === 'error' && (
-                  <span className="preview-error">Icon not found</span>
-                )}
+                <span className="preview-selected-name">{selectedIcon.prefix}:{selectedIcon.name}</span>
               </div>
             ) : (
               <div className="external-preview idle">
@@ -357,17 +158,15 @@ function OverrideSection({
             )}
           </div>
 
-          {selectedLibraryInfo && (
-            <a
-              href={selectedLibraryInfo.browseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="external-browse-link"
-            >
-              <icons.ExternalLink size={14} />
-              Browse icons at {selectedLibraryInfo.browseUrl.replace('https://', '').replace('/', '')}
-            </a>
-          )}
+          <a
+            href="https://icon-sets.iconify.design/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="external-browse-link"
+          >
+            <icons.ExternalLink size={14} />
+            Browse all icons at icon-sets.iconify.design
+          </a>
         </div>
       )}
     </div>
@@ -394,31 +193,23 @@ export function ManualOverrideModal({
   onClear
 }: ManualOverrideModalProps) {
   // Press override state
-  const [pressMode, setPressMode] = useState<Mode>('text')
+  const [pressMode, setPressMode] = useState<'text' | 'icon'>('text')
   const [pressTextValue, setPressTextValue] = useState('')
-  const [pressSelectedIcon, setPressSelectedIcon] = useState<string | null>(null)
-  const [pressExternalLibrary, setPressExternalLibrary] = useState<ExternalLibrary>('lucide')
-  const [pressExternalIconName, setPressExternalIconName] = useState('')
+  const [pressSelectedIcon, setPressSelectedIcon] = useState<{ prefix: string; name: string } | null>(null)
 
   // Hold override state
-  const [holdMode, setHoldMode] = useState<Mode>('text')
+  const [holdMode, setHoldMode] = useState<'text' | 'icon'>('text')
   const [holdTextValue, setHoldTextValue] = useState('')
-  const [holdSelectedIcon, setHoldSelectedIcon] = useState<string | null>(null)
-  const [holdExternalLibrary, setHoldExternalLibrary] = useState<ExternalLibrary>('lucide')
-  const [holdExternalIconName, setHoldExternalIconName] = useState('')
+  const [holdSelectedIcon, setHoldSelectedIcon] = useState<{ prefix: string; name: string } | null>(null)
 
   useEffect(() => {
     // Reset form when modal opens
     setPressTextValue('')
     setPressSelectedIcon(null)
     setPressMode('text')
-    setPressExternalLibrary('lucide')
-    setPressExternalIconName('')
     setHoldTextValue('')
     setHoldSelectedIcon(null)
     setHoldMode('text')
-    setHoldExternalLibrary('lucide')
-    setHoldExternalIconName('')
   }, [keyPos])
 
   const handleSave = () => {
@@ -430,18 +221,14 @@ export function ManualOverrideModal({
     if (pressMode === 'text' && pressTextValue.trim()) {
       pressOverride = { type: 'text', value: pressTextValue.trim() }
     } else if (pressMode === 'icon' && pressSelectedIcon) {
-      pressOverride = { type: 'icon', value: pressSelectedIcon }
-    } else if (pressMode === 'external' && pressExternalIconName.trim()) {
-      pressOverride = { type: 'external-icon', value: `${pressExternalLibrary}:${pressExternalIconName.trim()}` }
+      pressOverride = { type: 'external-icon', value: `${pressSelectedIcon.prefix}:${pressSelectedIcon.name}` }
     }
 
     if (hasHold) {
       if (holdMode === 'text' && holdTextValue.trim()) {
         holdOverride = { type: 'text', value: holdTextValue.trim() }
       } else if (holdMode === 'icon' && holdSelectedIcon) {
-        holdOverride = { type: 'icon', value: holdSelectedIcon }
-      } else if (holdMode === 'external' && holdExternalIconName.trim()) {
-        holdOverride = { type: 'external-icon', value: `${holdExternalLibrary}:${holdExternalIconName.trim()}` }
+        holdOverride = { type: 'external-icon', value: `${holdSelectedIcon.prefix}:${holdSelectedIcon.name}` }
       }
     }
 
@@ -466,8 +253,8 @@ export function ManualOverrideModal({
 
   if (keyPos === null) return null
 
-  const hasPressOverride = (pressMode === 'text' && pressTextValue.trim()) || (pressMode === 'icon' && pressSelectedIcon) || (pressMode === 'external' && pressExternalIconName.trim())
-  const hasHoldOverride = hasHold && ((holdMode === 'text' && holdTextValue.trim()) || (holdMode === 'icon' && holdSelectedIcon) || (holdMode === 'external' && holdExternalIconName.trim()))
+  const hasPressOverride = (pressMode === 'text' && pressTextValue.trim()) || (pressMode === 'icon' && pressSelectedIcon)
+  const hasHoldOverride = hasHold && ((holdMode === 'text' && holdTextValue.trim()) || (holdMode === 'icon' && holdSelectedIcon))
   const canSave = hasPressOverride || hasHoldOverride
 
   return (
@@ -490,10 +277,6 @@ export function ManualOverrideModal({
             setTextValue={setPressTextValue}
             selectedIcon={pressSelectedIcon}
             setSelectedIcon={setPressSelectedIcon}
-            externalLibrary={pressExternalLibrary}
-            setExternalLibrary={setPressExternalLibrary}
-            externalIconName={pressExternalIconName}
-            setExternalIconName={setPressExternalIconName}
           />
 
           {hasHold && (
@@ -506,10 +289,6 @@ export function ManualOverrideModal({
               setTextValue={setHoldTextValue}
               selectedIcon={holdSelectedIcon}
               setSelectedIcon={setHoldSelectedIcon}
-              externalLibrary={holdExternalLibrary}
-              setExternalLibrary={setHoldExternalLibrary}
-              externalIconName={holdExternalIconName}
-              setExternalIconName={setHoldExternalIconName}
             />
           )}
         </div>

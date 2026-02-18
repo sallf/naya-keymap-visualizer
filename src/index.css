@@ -293,10 +293,22 @@ h1 {
 /* Legend */
 .legend {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   justify-content: center;
+  align-items: center;
   margin-top: 20px;
   flex-wrap: wrap;
+}
+
+.legend-key-diagram {
+  display: flex;
+  align-items: center;
+}
+
+.legend-colors {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .legend-item {

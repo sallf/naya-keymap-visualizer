@@ -201,17 +201,35 @@ function App() {
       </main>
 
       <div className="legend">
-        <div className="legend-item">
-          <div className="legend-color key"></div> Key
+        <div className="legend-key-diagram">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            {/* Key shape */}
+            <rect x="0" y="0" width="80" height="80" rx="6" fill="#2a2a4a" stroke="#5a5a7a" strokeWidth="1.5" />
+            {/* Hold banner */}
+            <path d="M 0 48 L 80 48 L 80 74 A 6 6 0 0 1 74 80 L 6 80 A 6 6 0 0 1 0 74 Z" fill="#5a5a7a" />
+            {/* Modifier badge */}
+            <path d="M 0 6 A 6 6 0 0 1 6 0 L 32 0 L 32 14 A 2 2 0 0 1 30 16 L 0 16 Z" fill="#5a5a7a" />
+            {/* Modifier label */}
+            <text x="16" y="10" fill="#2a2a4a" fontSize="7" fontWeight="600" textAnchor="middle" dominantBaseline="middle">mod</text>
+            {/* Click label */}
+            <text x="40" y="30" fill="#fff" fontSize="11" fontWeight="500" textAnchor="middle" dominantBaseline="middle">Click</text>
+            {/* Hold label */}
+            <text x="40" y="64" fill="#2a2a4a" fontSize="9" fontWeight="600" textAnchor="middle" dominantBaseline="middle">Hold</text>
+          </svg>
         </div>
-        <div className="legend-item">
-          <div className="legend-color modifier"></div> Modifier
-        </div>
-        <div className="legend-item">
-          <div className="legend-color layer"></div> Layer
-        </div>
-        <div className="legend-item">
-          <div className="legend-color special"></div> Special
+        <div className="legend-colors">
+          <div className="legend-item">
+            <div className="legend-color key"></div> Key
+          </div>
+          <div className="legend-item">
+            <div className="legend-color modifier"></div> Modifier
+          </div>
+          <div className="legend-item">
+            <div className="legend-color layer"></div> Layer
+          </div>
+          <div className="legend-item">
+            <div className="legend-color special"></div> Special
+          </div>
         </div>
       </div>
 

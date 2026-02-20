@@ -26,12 +26,7 @@ The default NayaFlow app shows your keymap, but it can be hard to quickly unders
 Click any key to customize what's displayed:
 
 - **Text** - Replace labels with your own text (e.g., "Copy" instead of "LCTL(KC_C)")
-- **Built-in Icons** - 60+ common icons for media, navigation, and system functions
-- **External Icons** - Search 8000+ icons from popular libraries:
-  - Lucide (1500+ icons)
-  - Heroicons (450+ icons)
-  - Tabler (5900+ icons)
-  - Feather (286 icons)
+- **Icons** - Search 200,000+ icons via the [Iconify](https://iconify.design/) API
 
 Your customizations are saved per-layer and persist between sessions.
 
@@ -79,12 +74,7 @@ npm run dev
 Click any key to open the override modal:
 
 - **Text mode** - Enter custom text (max 10 characters)
-- **Icon mode** - Choose from 60+ built-in icons
-- **External mode** - Search 8000+ icons from popular libraries:
-  - Lucide (1500+ icons)
-  - Heroicons (450+ icons)
-  - Tabler (5900+ icons)
-  - Feather (286 icons)
+- **Icon mode** - Search 200,000+ icons via the [Iconify](https://iconify.design/) API
 
 Overrides are saved per-layer and persist in local storage.
 
@@ -115,16 +105,21 @@ npm run preview
 ```
 src/
 ├── components/
-│   ├── Keyboard.tsx      # Main keyboard layout
-│   ├── Key.tsx           # Individual key component
-│   ├── KeyIcon.tsx       # Icon rendering (built-in + external)
+│   ├── FileDropZone.tsx         # File upload drag-and-drop
+│   ├── Key.tsx                  # Individual key component
+│   ├── Keyboard.tsx             # Main keyboard layout
+│   ├── KeyIcon.tsx              # Icon rendering (built-in + external)
 │   ├── ManualOverrideModal.tsx  # Override editing UI
-│   └── OverridesList.tsx # Active overrides display
+│   ├── OverridesList.tsx        # Active overrides display
+│   ├── Toggle.tsx               # Toggle switch component
+│   └── Tooltip.tsx              # Tooltip component
 ├── hooks/
 │   ├── useDatabase.ts    # SQLite database loading
 │   └── useOverrides.ts   # Override state management
-├── types.ts              # TypeScript interfaces
-└── App.tsx               # Main application
+├── constants.ts           # Key mappings and constants
+├── types.ts               # TypeScript interfaces
+├── utils.ts               # Utility functions
+└── App.tsx                # Main application
 ```
 
 ## Tech Stack
@@ -132,7 +127,7 @@ src/
 - React 18
 - TypeScript
 - Vite
-- Lucide React (icons)
+- Lucide React (built-in icons)
 - Iconify API (external icon search)
 
 ## Contributing
@@ -146,7 +141,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## Acknowledgments
 
 - [Lucide](https://lucide.dev/) - Beautiful open source icons
-- [Heroicons](https://heroicons.com/) - Icons by the Tailwind CSS team
-- [Tabler Icons](https://tabler.io/icons) - 5900+ free icons
-- [Feather Icons](https://feathericons.com/) - Simply beautiful icons
 - [Iconify](https://iconify.design/) - Universal icon framework and search API

@@ -27,6 +27,32 @@ export interface KeyData {
   hold: KeyBinding | null
 }
 
+// Module types
+export type ModuleType = 'TOUCH' | 'TRACK' | 'TUNE' | 'FLOAT'
+
+export interface ModuleBinding {
+  actionCode: string
+  actionId: string | null
+  actionType: string
+  behavior: string
+  invert: boolean
+  layerMap: Map<string, LayerInfo>
+}
+
+export interface ModuleConfig {
+  id: string
+  name: string
+  type: ModuleType
+  bindingLocation: string
+  state: string | null
+  bindings: ModuleBinding[]
+}
+
+export interface ModuleData {
+  left: ModuleConfig | null
+  right: ModuleConfig | null
+}
+
 // Layout types
 export interface KeyDef {
   x: number

@@ -1032,6 +1032,57 @@ h1 {
   filter: brightness(0) invert(1);
 }
 
+/* Module cards */
+.module-bg {
+  fill: #1e1e38;
+  stroke: #4a4a6a;
+  stroke-width: 1.5;
+}
+
+.module-header-text {
+  fill: #ccc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  dominant-baseline: middle;
+}
+
+.module-name-text {
+  fill: #888;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  dominant-baseline: middle;
+}
+
+.module-separator {
+  stroke: #3a3a5a;
+  stroke-width: 1;
+}
+
+.module-gesture-text {
+  fill: #999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 10px;
+  dominant-baseline: middle;
+}
+
+.module-action-text {
+  fill: #ddd;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  dominant-baseline: middle;
+}
+
+.module-empty-text {
+  fill: #666;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 10px;
+  font-style: italic;
+  dominant-baseline: middle;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   body {

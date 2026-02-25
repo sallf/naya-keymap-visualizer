@@ -5,6 +5,7 @@ import {
   useProfiles,
   useLayers,
   useKeyData,
+  useModuleData,
   clearStoredDatabase,
 } from './hooks/useDatabase'
 import { useOverrides } from './hooks/useOverrides'
@@ -39,6 +40,7 @@ function App() {
   const { overrides, setOverride, clearOverride, clearAllOverrides } =
     useOverrides(selectedLayer)
   const keyData = useKeyData(db, selectedLayer, selectedProfile)
+  const moduleData = useModuleData(db, selectedLayer, selectedProfile)
 
   // Set initial profile when profiles load
   useEffect(() => {
@@ -206,6 +208,7 @@ function App() {
             showKeyNumbers={showKeyNumbers}
             overrides={overrides}
             onKeyClick={handleKeyClick}
+            moduleData={moduleData}
           />
         </div>
       </main>

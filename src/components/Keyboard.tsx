@@ -2,23 +2,33 @@ import { useState, MouseEvent } from 'react'
 import { LAYOUT, U, GAP } from '../constants'
 import { Key } from './Key'
 import { Tooltip } from './Tooltip'
-import type { KeyData, Override, KeyLabel, TooltipData } from '../types'
+import { Module, getModuleCardHeight } from './Module'
+import type { KeyData, Override, KeyLabel, TooltipData, ModuleData } from '../types'
 
 interface KeyboardProps {
   keyData: Map<number, KeyData>
   showKeyNumbers: boolean
   overrides: Record<string, Override>
   onKeyClick: (keyPos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => void
+  moduleData: ModuleData
 }
 
-export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick }: KeyboardProps) {
+export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick, moduleData }: KeyboardProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null)
 
   const leftWidth = 8 * (U + GAP)
   const rightWidth = 9 * (U + GAP)
-  const height = 6.5 * (U + GAP)
+  const keysHeight = 6.5 * (U + GAP)
   const centerGap = 40
   const totalWidth = leftWidth + centerGap + rightWidth + 40
+
+  // Calculate module area
+  const hasModules = moduleData.left !== null || moduleData.right !== null
+  const moduleGap = hasModules ? 20 : 0
+  const leftModuleHeight = moduleData.left ? getModuleCardHeight(moduleData.left) : 0
+  const rightModuleHeight = moduleData.right ? getModuleCardHeight(moduleData.right) : 0
+  const maxModuleHeight = Math.max(leftModuleHeight, rightModuleHeight)
+  const height = keysHeight + (hasModules ? moduleGap + maxModuleHeight : 0)
 
   const handleHover = (pos: number, data: KeyData | undefined, event: MouseEvent) => {
     if (!data) return
@@ -76,6 +86,24 @@ export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick }: Key
             />
           ))}
         </g>
+
+        {/* Module cards below each half */}
+        {moduleData.left && (
+          <Module
+            config={moduleData.left}
+            x={20}
+            y={keysHeight + moduleGap}
+            width={leftWidth - 20}
+          />
+        )}
+        {moduleData.right && (
+          <Module
+            config={moduleData.right}
+            x={leftWidth + centerGap}
+            y={keysHeight + moduleGap}
+            width={rightWidth}
+          />
+        )}
       </svg>
 
       {tooltip && <Tooltip {...tooltip} />}

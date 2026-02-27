@@ -32,6 +32,14 @@ h1 {
   color: #fff;
 }
 
+.btn-update-config {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  margin-top: -1rem;
+}
+
 .app-footer {
   margin-top: 32px;
   padding-top: 16px;
@@ -613,6 +621,15 @@ h1 {
   overflow-y: auto;
 }
 
+.modal-body .file-drop-zone-container {
+  padding: 0;
+}
+
+.modal-body .file-drop-zone {
+  border: none;
+  padding: 20px;
+}
+
 .modal-current {
   color: #888;
   font-size: 0.9rem;
@@ -1041,7 +1058,8 @@ h1 {
 
 .module-header-text {
   fill: #ccc;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 11px;
   font-weight: 700;
   dominant-baseline: middle;
@@ -1049,7 +1067,8 @@ h1 {
 
 .module-name-text {
   fill: #888;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 10px;
   font-weight: 400;
   dominant-baseline: middle;
@@ -1062,14 +1081,16 @@ h1 {
 
 .module-gesture-text {
   fill: #999;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 10px;
   dominant-baseline: middle;
 }
 
 .module-action-text {
   fill: #ddd;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 10px;
   font-weight: 500;
   dominant-baseline: middle;
@@ -1099,7 +1120,8 @@ h1 {
 
 .module-empty-text {
   fill: #666;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 10px;
   font-style: italic;
   dominant-baseline: middle;

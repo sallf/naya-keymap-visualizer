@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent, useCallback } from 'react'
-import { X, Github } from 'lucide-react'
+import { X, Github, RefreshCw } from 'lucide-react'
 import {
   useDatabase,
   useProfiles,
@@ -31,6 +31,7 @@ function App() {
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
   const [selectedLayer, setSelectedLayer] = useState<string | null>(null)
   const [showKeyNumbers, setShowKeyNumbers] = useState(false)
+  const [showUpdateConfigModal, setShowUpdateConfigModal] = useState(false)
   const [modalKey, setModalKey] = useState<number | string | null>(null)
   const [modalLabel, setModalLabel] = useState('')
   const [modalHoldLabel, setModalHoldLabel] = useState('')
@@ -89,7 +90,10 @@ function App() {
     setModalHasHold(hasHold)
   }
 
-  const handleModuleActionClick = (overrideKey: string, currentLabel: string) => {
+  const handleModuleActionClick = (
+    overrideKey: string,
+    currentLabel: string,
+  ) => {
     setModalKey(overrideKey)
     setModalLabel(currentLabel)
     setModalHoldLabel('')
@@ -111,13 +115,14 @@ function App() {
     setSelectedLayer(e.target.value)
   }
 
-  const handleClearKeymap = useCallback(() => {
+  const handleFullReset = useCallback(() => {
     if (
       confirm(
-        'Clear stored configuration? You will need to reload the database file.',
+        'Full reset? This will clear both your configuration file and all manual overrides.',
       )
     ) {
       clearStoredDatabase()
+      localStorage.removeItem('naya-keymap-overrides')
       window.location.reload()
     }
   }, [])
@@ -149,7 +154,11 @@ function App() {
           onBetaToggle={handleBetaToggle}
         />
         <footer className="app-footer">
-          <a href="https://github.com/sallf/naya-keymap-visualizer" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/sallf/naya-keymap-visualizer"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Github size={16} />
             github.com/sallf/naya-keymap-visualizer
           </a>
@@ -201,14 +210,19 @@ function App() {
         </div>
       </header>
 
+      <button
+        className="btn-link btn-update-config"
+        onClick={() => setShowUpdateConfigModal(true)}
+      >
+        <RefreshCw size={14} />
+        Update Config File
+      </button>
+
       <main>
         <div className="keyboard-container">
-          <button
-            className="btn-link keyboard-clear"
-            onClick={handleClearKeymap}
-          >
+          <button className="btn-link keyboard-clear" onClick={handleFullReset}>
             <X size={14} />
-            Clear Configuration File
+            Full Reset
           </button>
           <Keyboard
             keyData={keyData}
@@ -225,17 +239,62 @@ function App() {
         <div className="legend-key-diagram">
           <svg width="80" height="80" viewBox="0 0 80 80">
             {/* Key shape */}
-            <rect x="0" y="0" width="80" height="80" rx="6" fill="#2a2a4a" stroke="#5a5a7a" strokeWidth="1.5" />
+            <rect
+              x="0"
+              y="0"
+              width="80"
+              height="80"
+              rx="6"
+              fill="#2a2a4a"
+              stroke="#5a5a7a"
+              strokeWidth="1.5"
+            />
             {/* Hold banner */}
-            <path d="M 0 48 L 80 48 L 80 74 A 6 6 0 0 1 74 80 L 6 80 A 6 6 0 0 1 0 74 Z" fill="#5a5a7a" />
+            <path
+              d="M 0 48 L 80 48 L 80 74 A 6 6 0 0 1 74 80 L 6 80 A 6 6 0 0 1 0 74 Z"
+              fill="#5a5a7a"
+            />
             {/* Modifier badge */}
-            <path d="M 0 6 A 6 6 0 0 1 6 0 L 32 0 L 32 14 A 2 2 0 0 1 30 16 L 0 16 Z" fill="#5a5a7a" />
+            <path
+              d="M 0 6 A 6 6 0 0 1 6 0 L 32 0 L 32 14 A 2 2 0 0 1 30 16 L 0 16 Z"
+              fill="#5a5a7a"
+            />
             {/* Modifier label */}
-            <text x="16" y="10" fill="#2a2a4a" fontSize="7" fontWeight="600" textAnchor="middle" dominantBaseline="middle">mod</text>
+            <text
+              x="16"
+              y="10"
+              fill="#2a2a4a"
+              fontSize="7"
+              fontWeight="600"
+              textAnchor="middle"
+              dominantBaseline="middle"
+            >
+              mod
+            </text>
             {/* Click label */}
-            <text x="40" y="30" fill="#fff" fontSize="11" fontWeight="500" textAnchor="middle" dominantBaseline="middle">Click</text>
+            <text
+              x="40"
+              y="30"
+              fill="#fff"
+              fontSize="11"
+              fontWeight="500"
+              textAnchor="middle"
+              dominantBaseline="middle"
+            >
+              Click
+            </text>
             {/* Hold label */}
-            <text x="40" y="64" fill="#2a2a4a" fontSize="9" fontWeight="600" textAnchor="middle" dominantBaseline="middle">Hold</text>
+            <text
+              x="40"
+              y="64"
+              fill="#2a2a4a"
+              fontSize="9"
+              fontWeight="600"
+              textAnchor="middle"
+              dominantBaseline="middle"
+            >
+              Hold
+            </text>
           </svg>
         </div>
         <div className="legend-colors">
@@ -270,8 +329,43 @@ function App() {
         onClear={clearOverride}
       />
 
+      {showUpdateConfigModal && (
+        <div
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowUpdateConfigModal(false)
+          }}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Update Configuration File</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowUpdateConfigModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <FileDropZone
+                onFileSelect={(file) => {
+                  loadFromFile(file)
+                  setShowUpdateConfigModal(false)
+                }}
+                isBeta={isBeta}
+                onBetaToggle={handleBetaToggle}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <footer className="app-footer">
-        <a href="https://github.com/sallf/naya-keymap-visualizer" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://github.com/sallf/naya-keymap-visualizer"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Github size={16} />
           github.com/sallf/naya-keymap-visualizer
         </a>

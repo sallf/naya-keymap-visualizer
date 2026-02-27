@@ -1,5 +1,5 @@
 import { KEY_LABELS } from './constants'
-import type { KeyLabel, LayerInfo } from './types'
+import type { KeyLabel, LayerInfo, ModuleBinding } from './types'
 
 // Map key (without modifier) to icon names (lucide-react icon names)
 // Works for both LGUI (Mac) and LCTRL (Windows)
@@ -255,4 +255,56 @@ export function getKeyLabel(
   }
 
   return actionCode.replace(/_/g, ' ').substring(0, 6)
+}
+
+const GESTURE_NAMES: Record<string, string> = {
+  'horizontal': 'Horizontal',
+  'vertical': 'Vertical',
+  'swipe_left': 'Swipe \u2190',
+  'swipe_right': 'Swipe \u2192',
+  'swipe_up': 'Swipe \u2191',
+  'swipe_down': 'Swipe \u2193',
+  'tap': 'Tap',
+}
+
+export function getGestureLabel(behavior: string): string {
+  const parts = behavior.split(':')
+  const gesture = parts[0]
+  const fingerPart = parts[2]
+
+  let fingerLabel = ''
+  if (fingerPart) {
+    const match = fingerPart.match(/^(\d+)_finger/)
+    if (match) {
+      fingerLabel = `${match[1]}F `
+    }
+  }
+
+  const gestureName = GESTURE_NAMES[gesture] || gesture
+  return `${fingerLabel}${gestureName}`
+}
+
+const VALUE_ACTION_LABELS: Record<string, string> = {
+  'V_SCROLL_HORIZONTAL': 'Scroll H',
+  'V_SCROLL_VERTICAL': 'Scroll V',
+  'V_VOLUME': 'Volume',
+  'V_LED_BRIGHTNESS': 'LED Brightness',
+  'V_BRIGHTNESS': 'Brightness',
+}
+
+export function getModuleActionLabel(binding: ModuleBinding): string {
+  if (binding.actionType === 'value') {
+    if (binding.actionId && VALUE_ACTION_LABELS[binding.actionId]) {
+      return VALUE_ACTION_LABELS[binding.actionId]
+    }
+    // Fallback: clean up the actionCode
+    return binding.actionCode.replace(/_/g, ' ').replace(/ \/ /g, ' / ')
+  }
+
+  // For combo / shortcut_alias, delegate to getKeyLabel
+  const label = getKeyLabel(binding.actionCode, binding.actionType, binding.layerMap)
+  if (typeof label === 'string') return label
+  if ('icon' in label) return label.label || label.icon
+  if ('modifiers' in label) return `${label.modifiers}${label.label}`
+  return binding.actionCode
 }

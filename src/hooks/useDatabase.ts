@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { Profile, Layer, KeyData, LayerInfo } from '../types'
+import type { Profile, Layer, KeyData, LayerInfo, ModuleData, ModuleConfig, ModuleType } from '../types'
 
 const STORAGE_KEY = 'naya-keymap-db'
 
@@ -227,4 +227,105 @@ export function useKeyData(
   }, [db, layerId, profileId])
 
   return keyData
+}
+
+export function useModuleData(
+  db: Database | null,
+  layerId: string | null,
+  profileId: string | null
+): ModuleData {
+  const [moduleData, setModuleData] = useState<ModuleData>({ left: null, right: null })
+
+  useEffect(() => {
+    if (!db || !layerId || !profileId) {
+      setModuleData({ left: null, right: null })
+      return
+    }
+
+    try {
+      // Build layer map
+      const layerMap = new Map<string, LayerInfo>()
+      const layerResults = db.exec(`
+        SELECT id, name, order_id FROM layers WHERE profile_id = '${profileId}' ORDER BY order_id
+      `)
+      if (layerResults.length > 0) {
+        for (const [id, name, order] of layerResults[0].values) {
+          layerMap.set(id as string, { name: name as string, order: order as number })
+        }
+      }
+
+      const results = db.exec(`
+        SELECT mc.id, mc.name, mc.type, mcb.binding_location, mcb.state,
+               mb.action_code, mb.action_id, mb.action_type, mb.behavior, mb.invert
+        FROM module_config_bindings mcb
+        JOIN module_configs mc ON mcb.module_config_id = mc.id
+        LEFT JOIN module_bindings mb ON mb.module_config_id = mc.id
+        WHERE mcb.profile_id = '${profileId}' AND mcb.layer_id = '${layerId}'
+        ORDER BY mc.type, mb.behavior
+      `)
+
+      if (results.length === 0) {
+        setModuleData({ left: null, right: null })
+        return
+      }
+
+      // Group by module config ID
+      const configMap = new Map<string, ModuleConfig>()
+      for (const row of results[0].values) {
+        const [id, name, type, bindingLocation, state, actionCode, actionId, actionType, behavior, invert] = row
+        const configId = id as string
+
+        if (!configMap.has(configId)) {
+          configMap.set(configId, {
+            id: configId,
+            name: name as string,
+            type: type as ModuleType,
+            bindingLocation: bindingLocation as string,
+            state: state as string | null,
+            bindings: [],
+          })
+        }
+
+        // Only add binding if there's actual binding data
+        if (actionCode && behavior) {
+          configMap.get(configId)!.bindings.push({
+            actionCode: actionCode as string,
+            actionId: (actionId as string) || null,
+            actionType: actionType as string,
+            behavior: behavior as string,
+            invert: Boolean(invert),
+            layerMap,
+          })
+        }
+      }
+
+      // Sort bindings by finger count, then gesture name
+      for (const config of configMap.values()) {
+        config.bindings.sort((a, b) => {
+          const fingerA = a.behavior.match(/(\d+)_finger/)?.[1] ?? '0'
+          const fingerB = b.behavior.match(/(\d+)_finger/)?.[1] ?? '0'
+          if (fingerA !== fingerB) return Number(fingerA) - Number(fingerB)
+          return a.behavior.localeCompare(b.behavior)
+        })
+      }
+
+      // Assign to left/right based on binding_location
+      let left: ModuleConfig | null = null
+      let right: ModuleConfig | null = null
+      for (const config of configMap.values()) {
+        if (config.bindingLocation.includes('keyboard_left')) {
+          left = config
+        } else if (config.bindingLocation.includes('keyboard_right')) {
+          right = config
+        }
+      }
+
+      setModuleData({ left, right })
+    } catch {
+      // DB may not have module tables - degrade gracefully
+      setModuleData({ left: null, right: null })
+    }
+  }, [db, layerId, profileId])
+
+  return moduleData
 }

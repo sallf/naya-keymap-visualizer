@@ -5,6 +5,7 @@ import {
   useProfiles,
   useLayers,
   useKeyData,
+  useModuleData,
   clearStoredDatabase,
 } from './hooks/useDatabase'
 import { useOverrides } from './hooks/useOverrides'
@@ -30,7 +31,7 @@ function App() {
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
   const [selectedLayer, setSelectedLayer] = useState<string | null>(null)
   const [showKeyNumbers, setShowKeyNumbers] = useState(false)
-  const [modalKey, setModalKey] = useState<number | null>(null)
+  const [modalKey, setModalKey] = useState<number | string | null>(null)
   const [modalLabel, setModalLabel] = useState('')
   const [modalHoldLabel, setModalHoldLabel] = useState('')
   const [modalHasHold, setModalHasHold] = useState(false)
@@ -39,6 +40,7 @@ function App() {
   const { overrides, setOverride, clearOverride, clearAllOverrides } =
     useOverrides(selectedLayer)
   const keyData = useKeyData(db, selectedLayer, selectedProfile)
+  const moduleData = useModuleData(db, selectedLayer, selectedProfile)
 
   // Set initial profile when profiles load
   useEffect(() => {
@@ -85,6 +87,13 @@ function App() {
     setModalLabel(labelStr)
     setModalHoldLabel(holdLabelStr)
     setModalHasHold(hasHold)
+  }
+
+  const handleModuleActionClick = (overrideKey: string, currentLabel: string) => {
+    setModalKey(overrideKey)
+    setModalLabel(currentLabel)
+    setModalHoldLabel('')
+    setModalHasHold(false)
   }
 
   const handleModalClose = () => {
@@ -206,6 +215,8 @@ function App() {
             showKeyNumbers={showKeyNumbers}
             overrides={overrides}
             onKeyClick={handleKeyClick}
+            moduleData={moduleData}
+            onModuleActionClick={handleModuleActionClick}
           />
         </div>
       </main>

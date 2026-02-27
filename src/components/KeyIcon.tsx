@@ -84,6 +84,10 @@ const iconMap: Record<string, LucideIcon> = {
   'chevron-left': icons.ChevronLeft,
   'chevron-right': icons.ChevronRight,
 
+  // Modules
+  'hand': icons.Hand,
+  'move': icons.Move,
+
   // Misc
   'eye-off': icons.EyeOff,
 }

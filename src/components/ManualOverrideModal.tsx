@@ -174,13 +174,13 @@ function OverrideSection({
 }
 
 interface ManualOverrideModalProps {
-  keyPos: number | null
+  keyPos: number | string | null
   currentLabel: string
   currentHoldLabel: string
   hasHold: boolean
-  onSave: (keyPos: number, override: Override) => void
+  onSave: (keyPos: number | string, override: Override) => void
   onClose: () => void
-  onClear: (keyPos: number) => void
+  onClear: (keyPos: number | string) => void
 }
 
 export function ManualOverrideModal({
@@ -253,15 +253,16 @@ export function ManualOverrideModal({
 
   if (keyPos === null) return null
 
+  const isModuleOverride = typeof keyPos === 'string' && keyPos.startsWith('module:')
   const hasPressOverride = (pressMode === 'text' && pressTextValue.trim()) || (pressMode === 'icon' && pressSelectedIcon)
-  const hasHoldOverride = hasHold && ((holdMode === 'text' && holdTextValue.trim()) || (holdMode === 'icon' && holdSelectedIcon))
+  const hasHoldOverride = hasHold && !isModuleOverride && ((holdMode === 'text' && holdTextValue.trim()) || (holdMode === 'icon' && holdSelectedIcon))
   const canSave = hasPressOverride || hasHoldOverride
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>Override Key {keyPos}</h3>
+          <h3>{isModuleOverride ? 'Override Module Action' : `Override Key ${keyPos}`}</h3>
           <button className="modal-close" onClick={onClose}>
             <icons.X size={20} />
           </button>
@@ -279,7 +280,7 @@ export function ManualOverrideModal({
             setSelectedIcon={setPressSelectedIcon}
           />
 
-          {hasHold && (
+          {hasHold && !isModuleOverride && (
             <OverrideSection
               title="Hold"
               currentLabel={currentHoldLabel}

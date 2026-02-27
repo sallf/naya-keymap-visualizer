@@ -2,6 +2,8 @@
 
 A better way to view and understand your Naya Create keyboard layout.
 
+**Live site: [naya-keymap-visualizer.netlify.app](https://naya-keymap-visualizer.netlify.app/)**
+
 ![Naya Keymap Viewer Screenshot](docs/screenshot.png) See your entire keymap at a glance and customize how keys are displayed to make your layout easier to read and remember.
 
 ## Why Use This?

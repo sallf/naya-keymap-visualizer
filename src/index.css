@@ -1075,6 +1075,28 @@ h1 {
   dominant-baseline: middle;
 }
 
+.module-row-clickable {
+  cursor: pointer;
+}
+
+.module-row-clickable:hover .module-row-hitarea {
+  fill: rgba(255, 255, 255, 0.05);
+}
+
+.module-row-clickable:hover .module-gesture-text,
+.module-row-clickable:hover .module-action-text {
+  fill: #fff;
+}
+
+.module-row.has-override .module-action-text {
+  fill: #aab4ff;
+}
+
+.module-override-icon {
+  /* Invert black SVG icons to white for dark background */
+  filter: brightness(0) invert(1);
+}
+
 .module-empty-text {
   fill: #666;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;

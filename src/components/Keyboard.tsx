@@ -11,9 +11,10 @@ interface KeyboardProps {
   overrides: Record<string, Override>
   onKeyClick: (keyPos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => void
   moduleData: ModuleData
+  onModuleActionClick?: (overrideKey: string, currentLabel: string) => void
 }
 
-export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick, moduleData }: KeyboardProps) {
+export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick, moduleData, onModuleActionClick }: KeyboardProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null)
 
   const leftWidth = 8 * (U + GAP)
@@ -94,6 +95,9 @@ export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick, modul
             x={20}
             y={keysHeight + moduleGap}
             width={leftWidth - 20}
+            overrides={overrides}
+            side="left"
+            onActionClick={onModuleActionClick}
           />
         )}
         {moduleData.right && (
@@ -102,6 +106,9 @@ export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick, modul
             x={leftWidth + centerGap}
             y={keysHeight + moduleGap}
             width={rightWidth}
+            overrides={overrides}
+            side="right"
+            onActionClick={onModuleActionClick}
           />
         )}
       </svg>

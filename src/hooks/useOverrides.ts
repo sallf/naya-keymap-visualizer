@@ -28,7 +28,7 @@ export function useOverrides(layerId: string | null) {
     return layerId ? (allOverrides[layerId] || {}) : {}
   }, [allOverrides, layerId])
 
-  const setOverride = useCallback((keyPos: number, override: Override) => {
+  const setOverride = useCallback((keyPos: number | string, override: Override) => {
     if (!layerId) return
     setAllOverrides(prev => ({
       ...prev,
@@ -39,7 +39,7 @@ export function useOverrides(layerId: string | null) {
     }))
   }, [layerId])
 
-  const clearOverride = useCallback((keyPos: number) => {
+  const clearOverride = useCallback((keyPos: number | string) => {
     if (!layerId) return
     setAllOverrides(prev => {
       const layerOverrides = { ...(prev[layerId] || {}) }
@@ -60,7 +60,7 @@ export function useOverrides(layerId: string | null) {
     })
   }, [layerId])
 
-  const getOverride = useCallback((keyPos: number): Override | null => {
+  const getOverride = useCallback((keyPos: number | string): Override | null => {
     return overrides[keyPos] || null
   }, [overrides])
 

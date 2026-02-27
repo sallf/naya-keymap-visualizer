@@ -1,5 +1,6 @@
-import type { ModuleConfig } from '../types'
+import type { ModuleConfig, Override } from '../types'
 import { getGestureLabel, getModuleActionLabel } from '../utils'
+import { getExternalIconUrl, parseExternalIcon } from './KeyIcon'
 
 const ROW_HEIGHT = 22
 const HEADER_HEIGHT = 28
@@ -16,9 +17,12 @@ interface ModuleProps {
   x: number
   y: number
   width: number
+  overrides?: Record<string, Override>
+  side?: 'left' | 'right'
+  onActionClick?: (overrideKey: string, currentLabel: string) => void
 }
 
-export function Module({ config, x, y, width }: ModuleProps) {
+export function Module({ config, x, y, width, overrides, side, onActionClick }: ModuleProps) {
   const isDisabled = config.state === 'disabled'
   const height = getModuleCardHeight(config)
   const contentX = x + CARD_PADDING
@@ -76,8 +80,66 @@ export function Module({ config, x, y, width }: ModuleProps) {
       ) : (
         config.bindings.map((binding, i) => {
           const rowY = y + HEADER_HEIGHT + CARD_PADDING + i * ROW_HEIGHT + ROW_HEIGHT / 2
+          const overrideKey = side ? `module:${side}:${i}` : undefined
+          const override = overrideKey && overrides ? overrides[overrideKey] : undefined
+          const pressOverride = override?.press
+          const isClickable = !!onActionClick && !!overrideKey
+          const hasOverride = !!override
+
+          // Determine displayed action label
+          let actionContent: React.ReactNode
+          if (pressOverride?.type === 'external-icon') {
+            const parsed = parseExternalIcon(pressOverride.value)
+            if (parsed) {
+              actionContent = (
+                <image
+                  href={getExternalIconUrl(parsed.library, parsed.name)}
+                  x={contentX + contentWidth - 14}
+                  y={rowY - 7}
+                  width={14}
+                  height={14}
+                  className="module-override-icon"
+                />
+              )
+            } else {
+              actionContent = (
+                <text x={contentX + contentWidth} y={rowY} className="module-action-text" textAnchor="end">
+                  {pressOverride.value}
+                </text>
+              )
+            }
+          } else if (pressOverride?.type === 'text') {
+            actionContent = (
+              <text x={contentX + contentWidth} y={rowY} className="module-action-text" textAnchor="end">
+                {pressOverride.value}
+              </text>
+            )
+          } else {
+            actionContent = (
+              <text x={contentX + contentWidth} y={rowY} className="module-action-text" textAnchor="end">
+                {getModuleActionLabel(binding)}
+              </text>
+            )
+          }
+
           return (
-            <g key={`${binding.behavior}-${i}`}>
+            <g
+              key={`${binding.behavior}-${i}`}
+              className={`module-row${isClickable ? ' module-row-clickable' : ''}${hasOverride ? ' has-override' : ''}`}
+              onClick={isClickable ? () => onActionClick!(overrideKey!, getModuleActionLabel(binding)) : undefined}
+              style={isClickable ? { cursor: 'pointer' } : undefined}
+            >
+              {/* Invisible hit area for click */}
+              {isClickable && (
+                <rect
+                  x={contentX}
+                  y={rowY - ROW_HEIGHT / 2}
+                  width={contentWidth}
+                  height={ROW_HEIGHT}
+                  fill="transparent"
+                  className="module-row-hitarea"
+                />
+              )}
               <text
                 x={contentX}
                 y={rowY}
@@ -85,14 +147,7 @@ export function Module({ config, x, y, width }: ModuleProps) {
               >
                 {getGestureLabel(binding.behavior)}
               </text>
-              <text
-                x={contentX + contentWidth}
-                y={rowY}
-                className="module-action-text"
-                textAnchor="end"
-              >
-                {getModuleActionLabel(binding)}
-              </text>
+              {actionContent}
             </g>
           )
         })

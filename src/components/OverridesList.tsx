@@ -59,9 +59,19 @@ const iconComponents: Record<string, LucideIcon> = {
   'chevron-right': icons.ChevronRight,
 }
 
+function getOverrideLabel(key: string): string {
+  if (key.startsWith('module:')) {
+    const parts = key.split(':')
+    const side = parts[1]
+    const index = parseInt(parts[2], 10)
+    return `Module ${side.charAt(0).toUpperCase() + side.slice(1)} #${index + 1}`
+  }
+  return `Key ${key}`
+}
+
 interface OverridesListProps {
   overrides: Record<string, Override>
-  onClear: (keyPos: number) => void
+  onClear: (keyPos: number | string) => void
   onClearAll: () => void
 }
 
@@ -107,7 +117,7 @@ export function OverridesList({ overrides, onClear, onClearAll }: OverridesListP
 
           return (
             <div key={keyPos} className="override-item">
-              <span className="override-key">Key {keyPos}</span>
+              <span className="override-key">{getOverrideLabel(keyPos)}</span>
               <span className="override-value">
                 {pressOverride && (
                   <span className="override-part">
@@ -124,7 +134,7 @@ export function OverridesList({ overrides, onClear, onClearAll }: OverridesListP
               </span>
               <button
                 className="override-remove"
-                onClick={() => onClear(Number(keyPos))}
+                onClick={() => onClear(keyPos.startsWith('module:') ? keyPos : Number(keyPos))}
                 title="Remove override"
               >
                 <icons.X size={14} />

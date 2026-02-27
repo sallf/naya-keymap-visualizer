@@ -31,7 +31,7 @@ function App() {
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
   const [selectedLayer, setSelectedLayer] = useState<string | null>(null)
   const [showKeyNumbers, setShowKeyNumbers] = useState(false)
-  const [modalKey, setModalKey] = useState<number | null>(null)
+  const [modalKey, setModalKey] = useState<number | string | null>(null)
   const [modalLabel, setModalLabel] = useState('')
   const [modalHoldLabel, setModalHoldLabel] = useState('')
   const [modalHasHold, setModalHasHold] = useState(false)
@@ -87,6 +87,13 @@ function App() {
     setModalLabel(labelStr)
     setModalHoldLabel(holdLabelStr)
     setModalHasHold(hasHold)
+  }
+
+  const handleModuleActionClick = (overrideKey: string, currentLabel: string) => {
+    setModalKey(overrideKey)
+    setModalLabel(currentLabel)
+    setModalHoldLabel('')
+    setModalHasHold(false)
   }
 
   const handleModalClose = () => {
@@ -209,6 +216,7 @@ function App() {
             overrides={overrides}
             onKeyClick={handleKeyClick}
             moduleData={moduleData}
+            onModuleActionClick={handleModuleActionClick}
           />
         </div>
       </main>

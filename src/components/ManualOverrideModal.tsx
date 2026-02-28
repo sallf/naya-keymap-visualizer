@@ -1,6 +1,7 @@
-import { useState, useEffect, MouseEvent } from 'react'
+import { useState, useEffect, useRef, MouseEvent } from 'react'
 import * as icons from 'lucide-react'
 import type { Override, OverrideValue } from '../types'
+import { saveCustomImage } from '../hooks/useCustomImages'
 
 interface SearchResult {
   name: string
@@ -10,12 +11,14 @@ interface SearchResult {
 interface OverrideSectionProps {
   title: string
   currentLabel: string
-  mode: 'text' | 'icon'
-  setMode: (mode: 'text' | 'icon') => void
+  mode: 'text' | 'icon' | 'upload'
+  setMode: (mode: 'text' | 'icon' | 'upload') => void
   textValue: string
   setTextValue: (value: string) => void
   selectedIcon: { prefix: string; name: string } | null
   setSelectedIcon: (icon: { prefix: string; name: string } | null) => void
+  uploadedImage: string | null
+  setUploadedImage: (dataUrl: string | null) => void
 }
 
 function OverrideSection({
@@ -27,7 +30,10 @@ function OverrideSection({
   setTextValue,
   selectedIcon,
   setSelectedIcon,
+  uploadedImage,
+  setUploadedImage,
 }: OverrideSectionProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -68,6 +74,19 @@ function OverrideSection({
     setSearchResults([])
   }
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setUploadedImage(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+    // Reset the input so the same file can be re-selected
+    e.target.value = ''
+  }
+
   return (
     <div className="override-section">
       <div className="override-section-header">
@@ -87,6 +106,12 @@ function OverrideSection({
           onClick={() => setMode('icon')}
         >
           Icon
+        </button>
+        <button
+          className={`mode-tab ${mode === 'upload' ? 'active' : ''}`}
+          onClick={() => setMode('upload')}
+        >
+          Upload
         </button>
       </div>
 
@@ -169,6 +194,46 @@ function OverrideSection({
           </a>
         </div>
       )}
+
+      {mode === 'upload' && (
+        <div className="upload-section">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".svg,.png,image/svg+xml,image/png"
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+          />
+          {uploadedImage ? (
+            <div className="upload-preview">
+              <img src={uploadedImage} alt="Uploaded" width={32} height={32} />
+              <div className="upload-preview-actions">
+                <button
+                  className="btn-upload-change"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Change
+                </button>
+                <button
+                  className="btn-upload-remove"
+                  onClick={() => setUploadedImage(null)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="btn-upload"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <icons.Upload size={16} />
+              Choose SVG or PNG
+            </button>
+          )}
+          <p className="input-hint">Upload a custom SVG or PNG image</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -193,22 +258,26 @@ export function ManualOverrideModal({
   onClear
 }: ManualOverrideModalProps) {
   // Press override state
-  const [pressMode, setPressMode] = useState<'text' | 'icon'>('text')
+  const [pressMode, setPressMode] = useState<'text' | 'icon' | 'upload'>('text')
   const [pressTextValue, setPressTextValue] = useState('')
   const [pressSelectedIcon, setPressSelectedIcon] = useState<{ prefix: string; name: string } | null>(null)
+  const [pressUploadedImage, setPressUploadedImage] = useState<string | null>(null)
 
   // Hold override state
-  const [holdMode, setHoldMode] = useState<'text' | 'icon'>('text')
+  const [holdMode, setHoldMode] = useState<'text' | 'icon' | 'upload'>('text')
   const [holdTextValue, setHoldTextValue] = useState('')
   const [holdSelectedIcon, setHoldSelectedIcon] = useState<{ prefix: string; name: string } | null>(null)
+  const [holdUploadedImage, setHoldUploadedImage] = useState<string | null>(null)
 
   useEffect(() => {
     // Reset form when modal opens
     setPressTextValue('')
     setPressSelectedIcon(null)
+    setPressUploadedImage(null)
     setPressMode('text')
     setHoldTextValue('')
     setHoldSelectedIcon(null)
+    setHoldUploadedImage(null)
     setHoldMode('text')
   }, [keyPos])
 
@@ -222,6 +291,9 @@ export function ManualOverrideModal({
       pressOverride = { type: 'text', value: pressTextValue.trim() }
     } else if (pressMode === 'icon' && pressSelectedIcon) {
       pressOverride = { type: 'external-icon', value: `${pressSelectedIcon.prefix}:${pressSelectedIcon.name}` }
+    } else if (pressMode === 'upload' && pressUploadedImage) {
+      const imageId = saveCustomImage(pressUploadedImage)
+      pressOverride = { type: 'custom-image', value: imageId }
     }
 
     if (hasHold) {
@@ -229,6 +301,9 @@ export function ManualOverrideModal({
         holdOverride = { type: 'text', value: holdTextValue.trim() }
       } else if (holdMode === 'icon' && holdSelectedIcon) {
         holdOverride = { type: 'external-icon', value: `${holdSelectedIcon.prefix}:${holdSelectedIcon.name}` }
+      } else if (holdMode === 'upload' && holdUploadedImage) {
+        const imageId = saveCustomImage(holdUploadedImage)
+        holdOverride = { type: 'custom-image', value: imageId }
       }
     }
 
@@ -254,8 +329,8 @@ export function ManualOverrideModal({
   if (keyPos === null) return null
 
   const isModuleOverride = typeof keyPos === 'string' && keyPos.startsWith('module:')
-  const hasPressOverride = (pressMode === 'text' && pressTextValue.trim()) || (pressMode === 'icon' && pressSelectedIcon)
-  const hasHoldOverride = hasHold && !isModuleOverride && ((holdMode === 'text' && holdTextValue.trim()) || (holdMode === 'icon' && holdSelectedIcon))
+  const hasPressOverride = (pressMode === 'text' && pressTextValue.trim()) || (pressMode === 'icon' && pressSelectedIcon) || (pressMode === 'upload' && pressUploadedImage)
+  const hasHoldOverride = hasHold && !isModuleOverride && ((holdMode === 'text' && holdTextValue.trim()) || (holdMode === 'icon' && holdSelectedIcon) || (holdMode === 'upload' && holdUploadedImage))
   const canSave = hasPressOverride || hasHoldOverride
 
   return (
@@ -278,6 +353,8 @@ export function ManualOverrideModal({
             setTextValue={setPressTextValue}
             selectedIcon={pressSelectedIcon}
             setSelectedIcon={setPressSelectedIcon}
+            uploadedImage={pressUploadedImage}
+            setUploadedImage={setPressUploadedImage}
           />
 
           {hasHold && !isModuleOverride && (
@@ -290,6 +367,8 @@ export function ManualOverrideModal({
               setTextValue={setHoldTextValue}
               selectedIcon={holdSelectedIcon}
               setSelectedIcon={setHoldSelectedIcon}
+              uploadedImage={holdUploadedImage}
+              setUploadedImage={setHoldUploadedImage}
             />
           )}
         </div>

@@ -1049,6 +1049,84 @@ h1 {
   filter: brightness(0) invert(1);
 }
 
+/* Upload section */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 24px 16px;
+  background: #1a1a2e;
+  border: 1px dashed #3a3a5a;
+  border-radius: 6px;
+  color: #888;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-upload:hover {
+  border-color: #5a5a7a;
+  color: #aaa;
+  background: #1e1e35;
+}
+
+.upload-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #1a1a2e;
+  border: 1px solid #4a6a4a;
+  border-radius: 6px;
+}
+
+.upload-preview img {
+  max-width: 32px;
+  max-height: 32px;
+  filter: brightness(0) invert(1);
+  object-fit: contain;
+}
+
+.upload-preview-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-upload-change,
+.btn-upload-remove {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid #3a3a5a;
+  background: #252545;
+  color: #ccc;
+  transition: all 0.15s ease;
+}
+
+.btn-upload-change:hover {
+  background: #2a2a5a;
+  border-color: #5a5a7a;
+}
+
+.btn-upload-remove {
+  border-color: #5a3a3a;
+  color: #c88;
+}
+
+.btn-upload-remove:hover {
+  background: #3a2a2a;
+  border-color: #6a4a4a;
+}
+
 /* Module cards */
 .module-bg {
   fill: #1e1e38;

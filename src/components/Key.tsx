@@ -30,7 +30,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
   if (override?.press) {
     if (override.press.type === 'text') {
       label = override.press.value
-    } else if (override.press.type === 'icon' || override.press.type === 'external-icon') {
+    } else if (override.press.type === 'icon' || override.press.type === 'external-icon' || override.press.type === 'custom-image') {
       label = { icon: override.press.value }
     }
   }
@@ -42,7 +42,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
   if (hasHold && override?.hold) {
     if (override.hold.type === 'text') {
       holdLabel = override.hold.value
-    } else if (override.hold.type === 'icon' || override.hold.type === 'external-icon') {
+    } else if (override.hold.type === 'icon' || override.hold.type === 'external-icon' || override.hold.type === 'custom-image') {
       holdLabel = { icon: override.hold.value }
     }
   }

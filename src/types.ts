@@ -69,9 +69,10 @@ export interface Layout {
 
 // Override types
 export interface OverrideValue {
-  type: 'text' | 'icon' | 'external-icon'
+  type: 'text' | 'icon' | 'external-icon' | 'custom-image'
   value: string
   // For external-icon: value = "simpleicons:slack" or "lucide:accessibility"
+  // For custom-image: value = "img_<timestamp>" key into custom images storage
 }
 
 export interface Override {

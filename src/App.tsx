@@ -123,6 +123,7 @@ function App() {
     ) {
       clearStoredDatabase()
       localStorage.removeItem('naya-keymap-overrides')
+      localStorage.removeItem('naya-keymap-custom-images')
       window.location.reload()
     }
   }, [])

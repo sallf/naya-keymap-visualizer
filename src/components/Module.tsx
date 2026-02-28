@@ -20,7 +20,7 @@ interface ModuleProps {
   width: number
   overrides?: Record<string, Override>
   side?: 'left' | 'right'
-  onActionClick?: (overrideKey: string, currentLabel: string) => void
+  onActionClick?: (overrideKey: string, originalLabel: string, currentLabel: string) => void
 }
 
 export function Module({ config, x, y, width, overrides, side, onActionClick }: ModuleProps) {
@@ -148,7 +148,11 @@ export function Module({ config, x, y, width, overrides, side, onActionClick }: 
             <g
               key={`${binding.behavior}-${i}`}
               className={`module-row${isClickable ? ' module-row-clickable' : ''}${hasOverride ? ' has-override' : ''}`}
-              onClick={isClickable ? () => onActionClick!(overrideKey!, getModuleActionLabel(binding)) : undefined}
+              onClick={isClickable ? () => {
+                const original = getModuleActionLabel(binding)
+                const current = pressOverride ? pressOverride.value : original
+                onActionClick!(overrideKey!, original, current)
+              } : undefined}
               style={isClickable ? { cursor: 'pointer' } : undefined}
             >
               {/* Invisible hit area for click */}

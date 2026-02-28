@@ -9,9 +9,9 @@ interface KeyboardProps {
   keyData: Map<number, KeyData>
   showKeyNumbers: boolean
   overrides: Record<string, Override>
-  onKeyClick: (keyPos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => void
+  onKeyClick: (keyPos: number, originalLabel: KeyLabel, originalHoldLabel: KeyLabel | null, hasHold: boolean, currentLabel: KeyLabel, currentHoldLabel: KeyLabel | null) => void
   moduleData: ModuleData
-  onModuleActionClick?: (overrideKey: string, currentLabel: string) => void
+  onModuleActionClick?: (overrideKey: string, originalLabel: string, currentLabel: string) => void
 }
 
 export function Keyboard({ keyData, showKeyNumbers, overrides, onKeyClick, moduleData, onModuleActionClick }: KeyboardProps) {

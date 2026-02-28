@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, MouseEvent } from 'react'
 import * as icons from 'lucide-react'
 import type { Override, OverrideValue } from '../types'
-import { saveCustomImage } from '../hooks/useCustomImages'
+import { saveCustomImage, getCustomImage } from '../hooks/useCustomImages'
+import { getExternalIconUrl, parseExternalIcon } from './KeyIcon'
 
 interface SearchResult {
   name: string
@@ -10,6 +11,7 @@ interface SearchResult {
 
 interface OverrideSectionProps {
   title: string
+  originalLabel: string
   currentLabel: string
   mode: 'text' | 'icon' | 'upload'
   setMode: (mode: 'text' | 'icon' | 'upload') => void
@@ -21,8 +23,31 @@ interface OverrideSectionProps {
   setUploadedImage: (dataUrl: string | null) => void
 }
 
+function LabelPreview({ label }: { label: string }) {
+  if (!label) return <strong>(empty)</strong>
+
+  // Custom uploaded image
+  if (label.startsWith('img_')) {
+    const dataUrl = getCustomImage(label)
+    if (dataUrl) {
+      return <img src={dataUrl} alt="custom" className="label-preview-img" />
+    }
+  }
+
+  // External icon (e.g. "simpleicons:slack")
+  const external = parseExternalIcon(label)
+  if (external) {
+    const url = getExternalIconUrl(external.library, external.name)
+    return <img src={url} alt={external.name} className="label-preview-img" />
+  }
+
+  // Plain text
+  return <strong>{label}</strong>
+}
+
 function OverrideSection({
   title,
+  originalLabel,
   currentLabel,
   mode,
   setMode,
@@ -91,7 +116,12 @@ function OverrideSection({
     <div className="override-section">
       <div className="override-section-header">
         <span className="override-section-title">{title}</span>
-        <span className="override-section-current">Current: <strong>{currentLabel || '(empty)'}</strong></span>
+        <span className="override-section-labels">
+          <span className="override-section-current">Current: <LabelPreview label={currentLabel} /></span>
+          {currentLabel !== originalLabel && (
+            <span className="override-section-original">Original: <LabelPreview label={originalLabel} /></span>
+          )}
+        </span>
       </div>
 
       <div className="mode-tabs">
@@ -240,6 +270,8 @@ function OverrideSection({
 
 interface ManualOverrideModalProps {
   keyPos: number | string | null
+  originalLabel: string
+  originalHoldLabel: string
   currentLabel: string
   currentHoldLabel: string
   hasHold: boolean
@@ -250,6 +282,8 @@ interface ManualOverrideModalProps {
 
 export function ManualOverrideModal({
   keyPos,
+  originalLabel,
+  originalHoldLabel,
   currentLabel,
   currentHoldLabel,
   hasHold,
@@ -346,6 +380,7 @@ export function ManualOverrideModal({
         <div className="modal-body">
           <OverrideSection
             title="Press"
+            originalLabel={originalLabel}
             currentLabel={currentLabel}
             mode={pressMode}
             setMode={setPressMode}
@@ -360,6 +395,7 @@ export function ManualOverrideModal({
           {hasHold && !isModuleOverride && (
             <OverrideSection
               title="Hold"
+              originalLabel={originalHoldLabel}
               currentLabel={currentHoldLabel}
               mode={holdMode}
               setMode={setHoldMode}

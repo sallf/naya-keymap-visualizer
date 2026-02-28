@@ -35,6 +35,8 @@ function App() {
   const [modalKey, setModalKey] = useState<number | string | null>(null)
   const [modalLabel, setModalLabel] = useState('')
   const [modalHoldLabel, setModalHoldLabel] = useState('')
+  const [modalCurrentLabel, setModalCurrentLabel] = useState('')
+  const [modalCurrentHoldLabel, setModalCurrentHoldLabel] = useState('')
   const [modalHasHold, setModalHasHold] = useState(false)
 
   const layers = useLayers(db, selectedProfile)
@@ -62,41 +64,42 @@ function App() {
     setSelectedLayer(null)
   }, [selectedProfile])
 
+  const keyLabelToString = (kl: KeyLabel | null): string => {
+    if (kl == null) return ''
+    if (typeof kl === 'object') {
+      if ('icon' in kl) return kl.icon
+      if ('label' in kl) return kl.label
+      return ''
+    }
+    return kl || ''
+  }
+
   const handleKeyClick = (
     keyPos: number,
     label: KeyLabel,
     holdLabel: KeyLabel | null,
     hasHold: boolean,
+    currentLabel: KeyLabel,
+    currentHoldLabel: KeyLabel | null,
   ) => {
-    const labelStr =
-      typeof label === 'object' && label !== null
-        ? 'icon' in label
-          ? label.icon
-          : 'label' in label
-            ? label.label
-            : ''
-        : label || ''
-    const holdLabelStr =
-      typeof holdLabel === 'object' && holdLabel !== null
-        ? 'icon' in holdLabel
-          ? holdLabel.icon
-          : 'label' in holdLabel
-            ? holdLabel.label
-            : ''
-        : holdLabel || ''
     setModalKey(keyPos)
-    setModalLabel(labelStr)
-    setModalHoldLabel(holdLabelStr)
+    setModalLabel(keyLabelToString(label))
+    setModalHoldLabel(keyLabelToString(holdLabel))
+    setModalCurrentLabel(keyLabelToString(currentLabel))
+    setModalCurrentHoldLabel(keyLabelToString(currentHoldLabel))
     setModalHasHold(hasHold)
   }
 
   const handleModuleActionClick = (
     overrideKey: string,
+    originalLabel: string,
     currentLabel: string,
   ) => {
     setModalKey(overrideKey)
-    setModalLabel(currentLabel)
+    setModalLabel(originalLabel)
     setModalHoldLabel('')
+    setModalCurrentLabel(currentLabel)
+    setModalCurrentHoldLabel('')
     setModalHasHold(false)
   }
 
@@ -104,6 +107,8 @@ function App() {
     setModalKey(null)
     setModalLabel('')
     setModalHoldLabel('')
+    setModalCurrentLabel('')
+    setModalCurrentHoldLabel('')
     setModalHasHold(false)
   }
 
@@ -322,8 +327,10 @@ function App() {
 
       <ManualOverrideModal
         keyPos={modalKey}
-        currentLabel={modalLabel}
-        currentHoldLabel={modalHoldLabel}
+        originalLabel={modalLabel}
+        originalHoldLabel={modalHoldLabel}
+        currentLabel={modalCurrentLabel}
+        currentHoldLabel={modalCurrentHoldLabel}
         hasHold={modalHasHold}
         onSave={setOverride}
         onClose={handleModalClose}

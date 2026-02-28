@@ -10,7 +10,7 @@ interface KeyProps {
   override?: Override
   onHover?: (pos: number, data: KeyData | undefined) => void
   onLeave?: () => void
-  onClick?: (pos: number, label: KeyLabel, holdLabel: KeyLabel | null, hasHold: boolean) => void
+  onClick?: (pos: number, originalLabel: KeyLabel, originalHoldLabel: KeyLabel | null, hasHold: boolean, currentLabel: KeyLabel, currentHoldLabel: KeyLabel | null) => void
 }
 
 export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, onClick }: KeyProps) {
@@ -73,7 +73,7 @@ export function Key({ keyDef, data, showKeyNumber, override, onHover, onLeave, o
     const originalHoldLabel = hasHold && data?.hold
       ? getKeyLabel(data.hold.actionCode, data.hold.actionType, data.hold.layerMap)
       : null
-    onClick(pos, originalLabel, originalHoldLabel, hasHold)
+    onClick(pos, originalLabel, originalHoldLabel, hasHold, label, holdLabel)
   }
 
   return (

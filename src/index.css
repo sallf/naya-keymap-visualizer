@@ -714,6 +714,12 @@ h1 {
   font-size: 0.95rem;
 }
 
+.override-section-labels {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .override-section-current {
   color: #888;
   font-size: 0.85rem;
@@ -721,6 +727,24 @@ h1 {
 
 .override-section-current strong {
   color: #aaa;
+}
+
+.override-section-original {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.override-section-original strong {
+  color: #888;
+}
+
+.label-preview-img {
+  display: inline-block;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .modal-footer {

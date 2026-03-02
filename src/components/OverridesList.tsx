@@ -2,6 +2,7 @@ import * as icons from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Override } from '../types'
 import { getExternalIconUrl, parseExternalIcon } from './KeyIcon'
+import { getCustomImage } from '../hooks/useCustomImages'
 
 // Icon name to component mapping (subset for display)
 const iconComponents: Record<string, LucideIcon> = {
@@ -107,6 +108,13 @@ export function OverridesList({ overrides, onClear, onClearAll }: OverridesListP
             external: ReturnType<typeof parseExternalIcon>
           ) => {
             if (!override) return null
+            if (override.type === 'custom-image') {
+              const dataUrl = getCustomImage(override.value)
+              if (dataUrl) {
+                return <img src={dataUrl} alt="custom" width={14} height={14} className="external-icon-preview" style={{ objectFit: 'contain' }} />
+              }
+              return '(image)'
+            }
             if (Icon) return <Icon size={14} />
             if (external) {
               const url = getExternalIconUrl(external.library, external.name)

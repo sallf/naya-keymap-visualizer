@@ -1,5 +1,6 @@
 import * as icons from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { getCustomImage } from '../hooks/useCustomImages'
 
 // Helper to get external icon URL
 export function getExternalIconUrl(library: string, iconName: string): string {
@@ -101,6 +102,45 @@ interface KeyIconProps {
 }
 
 export function KeyIcon({ name, x, y, size = 16, color = '#fff' }: KeyIconProps) {
+  // Check if it's a custom uploaded image
+  if (name.startsWith('img_')) {
+    const dataUrl = getCustomImage(name)
+    if (dataUrl) {
+      // Custom images get a bit more room than standard icons
+      const imgSize = Math.round(size * 1.5)
+      return (
+        <foreignObject
+          x={x - imgSize / 2}
+          y={y - imgSize / 2}
+          width={imgSize}
+          height={imgSize}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <img
+              src={dataUrl}
+              alt="custom"
+              width={imgSize}
+              height={imgSize}
+              style={{
+                filter: color === '#fff' ? 'brightness(0) invert(1)' : undefined,
+                objectFit: 'contain',
+              }}
+            />
+          </div>
+        </foreignObject>
+      )
+    }
+    return null
+  }
+
   // Check if it's an external icon
   const externalIcon = parseExternalIcon(name)
   if (externalIcon) {

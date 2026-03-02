@@ -1,6 +1,7 @@
 import type { ModuleConfig, Override } from '../types'
 import { getGestureLabel, getModuleActionLabel } from '../utils'
 import { getExternalIconUrl, parseExternalIcon } from './KeyIcon'
+import { getCustomImage } from '../hooks/useCustomImages'
 
 const ROW_HEIGHT = 22
 const HEADER_HEIGHT = 28
@@ -19,7 +20,7 @@ interface ModuleProps {
   width: number
   overrides?: Record<string, Override>
   side?: 'left' | 'right'
-  onActionClick?: (overrideKey: string, currentLabel: string) => void
+  onActionClick?: (overrideKey: string, originalLabel: string, currentLabel: string) => void
 }
 
 export function Module({ config, x, y, width, overrides, side, onActionClick }: ModuleProps) {
@@ -88,7 +89,28 @@ export function Module({ config, x, y, width, overrides, side, onActionClick }: 
 
           // Determine displayed action label
           let actionContent: React.ReactNode
-          if (pressOverride?.type === 'external-icon') {
+          if (pressOverride?.type === 'custom-image') {
+            const dataUrl = getCustomImage(pressOverride.value)
+            if (dataUrl) {
+              const imgSize = 20
+              actionContent = (
+                <image
+                  href={dataUrl}
+                  x={contentX + contentWidth - imgSize}
+                  y={rowY - imgSize / 2}
+                  width={imgSize}
+                  height={imgSize}
+                  className="module-override-icon"
+                />
+              )
+            } else {
+              actionContent = (
+                <text x={contentX + contentWidth} y={rowY} className="module-action-text" textAnchor="end">
+                  (image)
+                </text>
+              )
+            }
+          } else if (pressOverride?.type === 'external-icon') {
             const parsed = parseExternalIcon(pressOverride.value)
             if (parsed) {
               actionContent = (
@@ -126,7 +148,11 @@ export function Module({ config, x, y, width, overrides, side, onActionClick }: 
             <g
               key={`${binding.behavior}-${i}`}
               className={`module-row${isClickable ? ' module-row-clickable' : ''}${hasOverride ? ' has-override' : ''}`}
-              onClick={isClickable ? () => onActionClick!(overrideKey!, getModuleActionLabel(binding)) : undefined}
+              onClick={isClickable ? () => {
+                const original = getModuleActionLabel(binding)
+                const current = pressOverride ? pressOverride.value : original
+                onActionClick!(overrideKey!, original, current)
+              } : undefined}
               style={isClickable ? { cursor: 'pointer' } : undefined}
             >
               {/* Invisible hit area for click */}
